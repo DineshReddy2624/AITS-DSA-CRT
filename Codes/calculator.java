@@ -1,14 +1,14 @@
 import java.util.*;
 
-class calculator 
-{
+class Calculator {
+
+    // Converts decimal to fraction using continued fraction method
     public static String decimalToFraction(double decimal) {
         double tolerance = 1.0E-6;
-        double h1 = 1;
-        double h2 = 0;
-        double k1 = 0;
-        double k2 = 1;
+        double h1 = 1, h2 = 0;
+        double k1 = 0, k2 = 1;
         double b = decimal;
+
         do {
             double a = Math.floor(b);
             double aux = h1;
@@ -23,93 +23,81 @@ class calculator
         return ((int) h1) + "/" + ((int) k1);
     }
 
-    public static void main(String[] args) 
-    {
-        Scanner s = new Scanner(System.in);
-        System.out.println("Enter First number:");
-        float n1 = s.nextFloat();
-        System.out.println("Enter second number");
-        float n2 = s.nextFloat();
-        System.out.println("Enter the operator (+,-,*,/,%)");
-        char op = s.next().charAt(0);
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("=================================");
+        System.out.println("     Welcome to Calculator");
+        System.out.println("=================================");
+
+        // Input Section
+        System.out.print("Enter first number: ");
+        float n1 = scanner.nextFloat();
+
+        System.out.print("Enter second number: ");
+        float n2 = scanner.nextFloat();
+
+        System.out.print("Enter operator (+, -, *, /, %): ");
+        char operator = scanner.next().charAt(0);
+
         boolean valid = true;
         float result = 0;
 
-        switch (op) 
-        {
+        System.out.println("\nCalculating...");
+
+        // Operation Logic
+        switch (operator) {
             case '+':
                 result = n1 + n2;
-                System.out.println("Result: " + result);
                 break;
             case '-':
-                if (n1 > n2) 
-                {
-                    result = n1 - n2;
-                } 
-                else 
-                {
-                    result = n2 - n1;
-                }
-                System.out.println("Result: " + result);
+                result = Math.abs(n1 - n2);
                 break;
             case '*':
                 result = n1 * n2;
-                System.out.println("Result: " + result);
                 break;
             case '/':
-                try 
-                {
-                    if (n2 == 0) 
-                    {
-                        valid = false;
-                        throw new Exception("Divide by zero is not defined");
-                    } 
-                    else 
-                    {
-                        result = n1 / n2;
-                        System.out.println("Result: " + result);
-                        break;
-                    }
-                } 
-                catch (Exception e) 
-                {
-                    System.err.println("Not defined");
-                    break;
+                if (n2 == 0) {
+                    System.err.println("Error: Division by zero is undefined.");
+                    valid = false;
+                } else {
+                    result = n1 / n2;
                 }
+                break;
             case '%':
                 result = n1 % n2;
-                System.out.println("Result: " + result);
                 break;
             default:
+                System.err.println("Invalid operator.");
                 valid = false;
-                System.out.println("Invalid operator");
-                break;
         }
 
-        if (valid) 
-        {
-            if (result % 1 != 0) 
-            {
-                System.out.println("Result is a decimal.");
-                System.out.println("Choose output format: (1) Decimal (2) Fraction");
-                int choice = s.nextInt();
-                if (choice == 1) 
-                {
-                    System.out.println("Result in Decimal: " + result);
-                } 
-                else if (choice == 2) 
-                {
-                    System.out.println("Result as Fraction: " + decimalToFraction(result));
-                } 
-                else 
-                {
-                    System.out.println("Invalid choice");
+        // Output Section
+        if (valid) {
+            System.out.println("Raw Result: " + result);
+
+            if (result % 1 != 0) {
+                System.out.println("\nResult is a decimal.");
+                System.out.println("Choose output format:");
+                System.out.println("1. Decimal");
+                System.out.println("2. Fraction");
+
+                System.out.print("Enter your choice: ");
+                int choice = scanner.nextInt();
+
+                if (choice == 1) {
+                    System.out.println("Formatted Result (Decimal): " + result);
+                } else if (choice == 2) {
+                    System.out.println("Formatted Result (Fraction): " + decimalToFraction(result));
+                } else {
+                    System.out.println("Invalid format choice.");
                 }
-            } 
-            else 
-            {
+            } else {
                 System.out.println("Result is an integer: " + (int) result);
             }
         }
+
+        System.out.println("\nThank you for using the calculator!");
+        System.out.println("=================================");
     }
 }
