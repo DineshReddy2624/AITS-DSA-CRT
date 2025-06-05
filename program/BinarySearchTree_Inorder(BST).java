@@ -11,7 +11,7 @@ class Node
     }
 
 }
-class BST
+class BSTInorder
 {
     static Node insert(Node root,int key)
     {
@@ -38,8 +38,26 @@ class BST
         if(root != null)
         {
             Inorder(root.left);
-            System.out.println(" "+root.key);
+            System.out.print(" "+root.key);
             Inorder(root.right);
+        }
+    }
+    static void postorder(Node root)
+    {
+        if(root != null)
+        {
+            postorder(root.left);
+            postorder(root.right);
+            System.out.print(" "+root.key);
+        }
+    }
+    static void preorder(Node root)
+    {
+        if(root != null)
+        {
+            System.out.print(" "+root.key);
+            preorder(root.left);
+            preorder(root.right);
         }
     }
     public static void main(String args[])
@@ -50,6 +68,11 @@ class BST
             System.out.println("Inserting: " + value);
             root = insert(root, value);
         }
+        System.out.println("Binary Tree (Inorder)");
         Inorder(root);
+        System.out.println("\nBinary Tree (Postorder)");
+        postorder(root);
+        System.out.println("\nBinary Tree (Preorder)");
+        preorder(root);
     }
 }
