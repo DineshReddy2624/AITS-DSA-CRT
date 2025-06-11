@@ -16,4 +16,4 @@
 
 1. Clone the repo:
    ```bash
-   git clone https://github.com/DineshReddy2624/AITS-DSA-CRT.git
+   https://github.com/DineshReddy2624/AITS-DSA-CRT.git
