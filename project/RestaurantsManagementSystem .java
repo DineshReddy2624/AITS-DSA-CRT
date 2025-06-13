@@ -1,8 +1,8 @@
 import java.util.*;
 
-public class RestaurantsManagementSystem 
+public class RestaurantsManagementSystem
 {
-    static class MenuItem 
+    static class MenuItem
     {
         private int id;
         private String name;
@@ -13,58 +13,59 @@ public class RestaurantsManagementSystem
             this.name = name;
             this.price = price;
         }
-        public int getId() 
-        { 
-            return id; 
-        }
-        public String getName() 
-        { 
-            return name; 
-        }
-        public String getPrice() 
-        { 
-            return price; 
-        }
+        public int getId() { return id; }
+        public String getName() { return name; }
+        public String getPrice() { return price; }
     }
 
-    static class Order 
+    static class Order
     {
         int orderId;
         List<MenuItem> items = new ArrayList<>();
         String status = "placed";
         String paymentStatus = "pending";
-        public Order(int orderId) 
+        int discountApplied = 0;
+        public Order(int orderId)
         {
             this.orderId = orderId;
         }
-        void addItem(MenuItem item) 
+        void addItem(MenuItem item)
         {
             items.add(item);
         }
-        int getPrice() 
+        int getPrice()
         {
             int total = 0;
-            for (MenuItem item : items) 
+            for (MenuItem item : items)
             {
                 String priceStr = item.getPrice().replaceAll("[^0-9]", "");
                 total += Integer.parseInt(priceStr);
             }
             return total;
         }
-        public void display() 
+        int getFinalPrice()
+        {
+            return getPrice() - discountApplied;
+        }
+        public void display()
         {
             System.out.println("Order ID: " + orderId);
-            for (MenuItem item : items) 
+            for (MenuItem item : items)
             {
                 System.out.println("Item: " + item.getName() + " | Price: Rs." + item.getPrice());
             }
             System.out.println("Total Price: Rs." + getPrice());
+            if (discountApplied > 0)
+            {
+                System.out.println("Discount Applied: Rs." + discountApplied);
+                System.out.println("Final Price: Rs." + getFinalPrice());
+            }
             System.out.println("Status: " + status);
             System.out.println("Payment Status: " + paymentStatus);
         }
     }
 
-    static class TableBooking 
+    static class TableBooking
     {
         String tableType;
         int tableNumber;
@@ -75,7 +76,7 @@ public class RestaurantsManagementSystem
         String paymentStatus = "pending";
         int bookingFee;
 
-        public TableBooking(String tableType, int tableNumber, String customerName, String phone, int seats, String customerId, int bookingFee) 
+        public TableBooking(String tableType, int tableNumber, String customerName, String phone, int seats, String customerId, int bookingFee)
         {
             this.tableType = tableType;
             this.tableNumber = tableNumber;
@@ -85,7 +86,7 @@ public class RestaurantsManagementSystem
             this.customerId = customerId;
             this.bookingFee = bookingFee;
         }
-        public void display() 
+        public void display()
         {
             System.out.println("Customer ID: " + customerId +
                     " | Table: " + tableType + " #" + tableNumber +
@@ -114,7 +115,7 @@ public class RestaurantsManagementSystem
     static Map<Integer, MenuItem> menuMap = new HashMap<>();
     static Order currentOrder = null;
 
-    public static void main(String[] args) 
+    public static void main(String[] args)
     {
         Scanner s = new Scanner(System.in);
         initializeMenu();
@@ -124,9 +125,9 @@ public class RestaurantsManagementSystem
         System.out.println("2. Customer access");
         System.out.print("Please select your access level (1 or 2): ");
         int accessLevel = s.nextInt();
-        while (valided) 
+        while (valided)
         {
-            if (accessLevel == 2) 
+            if (accessLevel == 2)
             {
                 customerAccess(s);
             }
@@ -135,20 +136,20 @@ public class RestaurantsManagementSystem
             {
                 System.out.print("Enter 4-digit admin PIN: ");
                 int pin = s.nextInt();
-                if (pin == 2004) 
+                if (pin == 2004)
                 {
                     adminAccess(s);
-                } 
-                else 
+                }
+                else
                 {
                     System.out.println("Invalid PIN. Access denied.");
                 }
             }
             System.out.print("Next access level (1 for Exit, 2 for Customer): ");
             accessLevel = s.nextInt();
-            if (accessLevel == 2) 
+            if (accessLevel == 2)
                 valided = true;
-            else 
+            else
             {
                 valided = false;
                 System.out.println("Exiting the system. Thank you!");
@@ -156,12 +157,12 @@ public class RestaurantsManagementSystem
         }
     }
 
-    public static void initializeMenu() 
+    public static void initializeMenu()
     {
         int id = 101;
         String[] names = {"chicken biryani", "mutton biryani", "veg biryani", "chicken curry", "mutton curry", "veg curry", "chicken tikka", "mutton tikka", "veg tikka", "chicken kebab", "mutton kebab", "veg kebab", "soft drink", "water", "salad", "dessert"};
         int[] prices = {150, 200, 100, 180, 220, 120, 160, 210, 130, 170, 230, 140, 50, 20, 30, 80};
-        for (int i = 0; i < names.length; i++) 
+        for (int i = 0; i < names.length; i++)
         {
             MenuItem item = new MenuItem(id, names[i], "RS. " + prices[i]);
             menuList.add(item);
@@ -169,10 +170,152 @@ public class RestaurantsManagementSystem
         }
     }
 
-    public static void adminAccess(Scanner s) 
+    public static void displayMenu()
+    {
+        System.out.println("\n====== VEG MENU ======");
+        for (MenuItem item : menuList)
+        {
+            String n = item.getName().toLowerCase();
+            if (n.contains("veg") || n.equals("salad") || n.equals("dessert"))
+            {
+                System.out.println("ID: " + item.getId() + " | " + item.getName() + " - Rs." + item.getPrice());
+            }
+        }
+        System.out.println("\n==== NON-VEG MENU ====");
+        for (MenuItem item : menuList)
+        {
+            String n = item.getName().toLowerCase();
+            if ((n.contains("chicken") || n.contains("mutton")) && !n.contains("veg"))
+            {
+                System.out.println("ID: " + item.getId() + " | " + item.getName() + " - Rs." + item.getPrice());
+            }
+        }
+        System.out.println("\n== BEVERAGES & EXTRAS ==");
+        for (MenuItem item : menuList)
+        {
+            String n = item.getName().toLowerCase();
+            if (n.equals("soft drink") || n.equals("water"))
+            {
+                System.out.println("ID: " + item.getId() + " | " + item.getName() + " - Rs." + item.getPrice());
+            }
+        }
+        System.out.println("\n** Use coupon SHEILD2004 for Rs.100 off on orders above Rs.500! **");
+    }
+
+    public static void addMultipleItemsToCart(String input)
+    {
+        if (currentOrder == null)
+        {
+            currentOrder = new Order(orderId);
+            System.out.println("Order ID generated: " + currentOrder.orderId);
+        }
+        String[] ids = input.split(",");
+        for (String idStr : ids)
+        {
+            try
+            {
+                int id = Integer.parseInt(idStr.trim());
+                MenuItem item = menuMap.get(id);
+                if (item != null)
+                {
+                    cart.add(item);
+                    currentOrder.addItem(item);
+                    System.out.println("Added: " + item.getName());
+                }
+                else
+                {
+                    System.out.println("Item ID " + id + " not found.");
+                }
+            }
+            catch (NumberFormatException e)
+            {
+                System.out.println("Invalid ID: " + idStr);
+            }
+        }
+        System.out.println("Current Order ID: " + currentOrder.orderId);
+    }
+
+    public static void viewCart()
+    {
+        if (cart.isEmpty())
+        {
+            System.out.println("Cart is empty.");
+        }
+        else
+        {
+            System.out.println("Current Order ID: " + currentOrder.orderId);
+            int total = 0;
+            for (MenuItem item : cart)
+            {
+                int price = Integer.parseInt(item.getPrice().replaceAll("[^0-9]", ""));
+                total += price;
+                System.out.println("Item: " + item.getName() + " | Price: Rs." + item.getPrice());
+            }
+            System.out.println("Total: Rs." + total);
+        }
+    }
+
+    public static void confirmOrder(Scanner s)
+    {
+        if (cart.isEmpty())
+        {
+            System.out.println("Cart is empty.");
+            return;
+        }
+        int discount = 0;
+        currentOrder.display();
+        System.out.print("Do you have a discount coupon? (yes/no): ");
+        String hasCoupon = s.next().trim().toLowerCase();
+        if (hasCoupon.equals("yes"))
+        {
+            System.out.print("Enter coupon code: ");
+            String code = s.next().trim();
+            if (code.equalsIgnoreCase("SHEILD2004") && currentOrder.getPrice() >= 500)
+            {
+                discount = 100;
+                currentOrder.discountApplied = discount;
+                System.out.println("Coupon applied! Rs.100 off.");
+            }
+            else if (!code.equalsIgnoreCase("SHEILD2004"))
+            {
+                System.out.println("Invalid coupon code.");
+            }
+            else
+            {
+                System.out.println("Order must be at least Rs.500 to use this coupon.");
+            }
+        }
+        Random rand = new Random();
+        int otp = 1000 + rand.nextInt(9000);
+        System.out.println("To confirm payment, your OTP is: " + otp);
+        while (true)
+        {
+            System.out.print("Enter the OTP: ");
+            int enteredOtp = s.nextInt();
+            if (enteredOtp == otp) break;
+            System.out.println("Incorrect OTP. Please try again.");
+        }
+        int expectedAmount = currentOrder.getPrice() - discount;
+        while (true)
+        {
+            System.out.print("Enter payment amount (Rs." + expectedAmount + "): ");
+            int enteredAmount = s.nextInt();
+            if (enteredAmount == expectedAmount) break;
+            System.out.println("Incorrect amount. Please enter the correct amount.");
+        }
+        currentOrder.paymentStatus = "paid";
+        currentOrder.status = "confirmed";
+        paidOrders.add(currentOrder);
+        cart.clear();
+        System.out.println("Order confirmed and paid. Thank you!");
+        orderId++;
+        currentOrder = null;
+    }
+
+    public static void adminAccess(Scanner s)
     {
         boolean isValid = true;
-        while (isValid) 
+        while (isValid)
         {
             System.out.println("\nAdmin Menu:");
             System.out.println("1. View menu items");
@@ -189,7 +332,7 @@ public class RestaurantsManagementSystem
             int choice = s.nextInt();
             s.nextLine();
 
-            switch (choice) 
+            switch (choice)
             {
                 case 1: displayMenu(); break;
                 case 2:
@@ -206,13 +349,13 @@ public class RestaurantsManagementSystem
                 case 3:
                     System.out.print("Enter item ID to remove: ");
                     int id = s.nextInt();
-                    if (menuMap.containsKey(id)) 
+                    if (menuMap.containsKey(id))
                     {
                         menuList.removeIf(item -> item.getId() == id);
                         menuMap.remove(id);
                         System.out.println("Item removed.");
-                    } 
-                    else 
+                    }
+                    else
                     {
                         System.out.println("Item not found.");
                     }
@@ -222,8 +365,8 @@ public class RestaurantsManagementSystem
                     else for (TableBooking b : bookings) b.display();
                     break;
                 case 5: viewCart(); break;
-                case 6: 
-                    System.out.println("Placing order is handled in customer access."); 
+                case 6:
+                    System.out.println("Placing order is handled in customer access.");
                     break;
                 case 7: confirmOrder(s); break;
                 case 8:
@@ -249,9 +392,9 @@ public class RestaurantsManagementSystem
         }
     }
 
-    public static void customerAccess(Scanner s) 
+    public static void customerAccess(Scanner s)
     {
-        while (true) 
+        while (true)
         {
             System.out.println("\nCustomer Menu:");
             System.out.println("1. View Menu");
@@ -266,7 +409,7 @@ public class RestaurantsManagementSystem
             System.out.println("10. Exit");
             System.out.print("Enter your choice: ");
             int ch = s.nextInt();
-            switch (ch) 
+            switch (ch)
             {
                 case 1: displayMenu(); break;
                 case 2:
@@ -292,8 +435,10 @@ public class RestaurantsManagementSystem
                     System.out.print("Enter Customer ID to view booking (e.g., CUST1001): ");
                     String custId = s.nextLine().trim();
                     boolean found = false;
-                    for (TableBooking b : bookings) {
-                        if (b.customerId.equalsIgnoreCase(custId)) {
+                    for (TableBooking b : bookings)
+                    {
+                        if (b.customerId.equalsIgnoreCase(custId))
+                        {
                             b.display();
                             found = true;
                             break;
@@ -312,304 +457,199 @@ public class RestaurantsManagementSystem
             }
         }
     }
-    public static void viewAllOrders() {
+
+    public static void viewAllOrders()
+    {
         System.out.println("\n--- Paid Orders ---");
-        if (paidOrders.isEmpty()) {
+        if (paidOrders.isEmpty())
+        {
             System.out.println("No paid orders found.");
-        } else {
-            for (Order o : paidOrders) {
+        }
+        else
+        {
+            for (Order o : paidOrders)
+            {
                 o.display();
                 System.out.println("---------------------");
             }
         }
 
         System.out.println("\n--- Unpaid Orders ---");
-        if (unpaidOrders.isEmpty()) {
+        if (unpaidOrders.isEmpty())
+        {
             System.out.println("No unpaid orders found.");
-        } else {
-            for (Order o : unpaidOrders) {
+        }
+        else
+        {
+            for (Order o : unpaidOrders)
+            {
                 o.display();
                 System.out.println("---------------------");
             }
         }
     }
 
-    public static void displayMenu() 
-    {
-        System.out.println("\nMenu:");
-        Collections.sort(menuList, Comparator.comparingInt(MenuItem::getId));
-        for (MenuItem item : menuList) 
-        {
-            System.out.println("ID: " + item.getId() + " | " + item.getName() + " - Rs." + item.getPrice());
-        }
-    }
-
-    public static void addMultipleItemsToCart(String input) 
-    {
-        if (currentOrder == null) 
-        {
-            currentOrder = new Order(orderId);
-            System.out.println("Order ID generated: " + currentOrder.orderId);
-        }
-        String[] ids = input.split(",");
-        for (String idStr : ids) 
-        {
-            try 
-            {
-                int id = Integer.parseInt(idStr.trim());
-                MenuItem item = menuMap.get(id);
-                if (item != null) 
-                {
-                    cart.add(item);
-                    currentOrder.addItem(item);
-                    System.out.println("Added: " + item.getName());
-                } 
-                else 
-                {
-                    System.out.println("Item ID " + id + " not found.");
-                }
-            } 
-            catch (NumberFormatException e) 
-            {
-                System.out.println("Invalid ID: " + idStr);
-            }
-        }
-        System.out.println("Current Order ID: " + currentOrder.orderId);
-    }
-
-    public static void viewCart() 
-    {
-        if (cart.isEmpty()) System.out.println("Cart is empty.");
-        else 
-        {
-            System.out.println("Current Order ID: " + currentOrder.orderId);
-            int total = 0;
-            for (MenuItem item : cart) 
-            {
-                int price = Integer.parseInt(item.getPrice().replaceAll("[^0-9]", ""));
-                total += price;
-                System.out.println("Item: " + item.getName() + " | Price: Rs." + item.getPrice());
-            }
-            System.out.println("Total: Rs." + total);
-        }
-    }
-
-    // Improved: Prevent duplicate payments, ask for correct OTP/amount
-    public static void confirmOrder(Scanner s) 
-    {
-        if (cart.isEmpty()) 
-        {
-            System.out.println("Cart is empty.");
-            return;
-        }
-        currentOrder.display();
-
-        // OTP logic
-        Random rand = new Random();
-        int otp = 1000 + rand.nextInt(9000);
-        System.out.println("To confirm payment, your OTP is: " + otp);
-
-        while (true) {
-            System.out.print("Enter the OTP: ");
-            int enteredOtp = s.nextInt();
-            if (enteredOtp == otp) break;
-            System.out.println("Incorrect OTP. Please try again.");
-        }
-
-        // Amount logic
-        int expectedAmount = currentOrder.getPrice();
-        while (true) {
-            System.out.print("Enter payment amount (Rs." + expectedAmount + "): ");
-            int enteredAmount = s.nextInt();
-            if (enteredAmount == expectedAmount) break;
-            System.out.println("Incorrect amount. Please enter the exact amount.");
-        }
-
-        boolean alreadyPaid = false;
-        for (Order o : paidOrders) 
-        {
-            if (o.orderId == currentOrder.orderId) 
-            {
-                alreadyPaid = true;
-                break;
-            }
-        }
-        if (alreadyPaid) 
-        {
-            System.out.println("This order has already been paid. Duplicate payment not allowed.");
-            cart.clear();
-            currentOrder = null;
-            return;
-        }
-
-        currentOrder.paymentStatus = "paid";
-        paidOrders.add(currentOrder);
-        orderQueue.add(currentOrder);
-        System.out.println("Payment successful. Your Order ID is: " + currentOrder.orderId);
-        currentOrder.display();
-        orderId++;
-        cart.clear();
-        currentOrder = null;
-    }
-    public static void reserveTable(int people, String name, String phone, Scanner s) 
+    public static void reserveTable(int people, String name, String phone, Scanner s)
     {
         String tableType = "";
         int tableNumber = -1;
-        boolean[] tableArr = null;
+        int seats = 0;
         int bookingFee = 0;
+        boolean[] tableArr = null;
 
-        if (people > 10) 
+        if (people <= 2)
         {
-            System.out.println("We do not have tables for more than 10 people.");
-            return;
+            tableType = "Table2";
+            seats = 2;
+            tableArr = tables2;
+            bookingFee = 100;
         }
-        if (people > 8) 
+        else if (people <= 4)
         {
-            tableType = "10-seater";
-            tableArr = tables10;
-            bookingFee = 500;
+            tableType = "Table4";
+            seats = 4;
+            tableArr = tables4;
+            bookingFee = 200;
         }
-        else if (people > 6) 
+        else if (people <= 6)
         {
-            tableType = "8-seater";
+            tableType = "Table6";
+            seats = 6;
+            tableArr = tables6;
+            bookingFee = 300;
+        }
+        else if (people <= 8)
+        {
+            tableType = "Table8";
+            seats = 8;
             tableArr = tables8;
             bookingFee = 400;
         }
-        else if (people > 4) 
+        else if (people <= 10)
         {
-            tableType = "6-seater";
-            tableArr = tables6;
-            bookingFee = 350;
+            tableType = "Table10";
+            seats = 10;
+            tableArr = tables10;
+            bookingFee = 500;
         }
-        else if (people > 2) 
+        else
         {
-            tableType = "4-seater";
-            tableArr = tables4;
-            bookingFee = 300;
-        }
-        else if (people > 0) 
-        {
-            tableType = "2-seater";
-            tableArr = tables2;
-            bookingFee = 200;
-        }
-        else 
-        {
-            System.out.println("Invalid number of people.");
+            System.out.println("We don't have tables for more than 10 people.");
             return;
         }
 
-        // Find first available table
-        for (int i = 0; i < tableArr.length; i++) 
+        for (int i = 0; i < tableArr.length; i++)
         {
-            if (!tableArr[i]) 
+            if (!tableArr[i])
             {
+                tableArr[i] = true;
                 tableNumber = i + 1;
                 break;
             }
         }
-        if (tableNumber == -1) 
+
+        if (tableNumber == -1)
         {
-            System.out.println("No available tables of this size.");
+            System.out.println("Sorry, no available tables for " + seats + " people.");
             return;
         }
 
-        String customerIdStr = "CUST" + (customerId++);
-        TableBooking booking = new TableBooking(tableType, tableNumber, name, phone, people, customerIdStr, bookingFee);
+        String custId = "CUST" + customerId++;
+        TableBooking booking = new TableBooking(tableType, tableNumber, name, phone, seats, custId, bookingFee);
+        bookings.add(booking);
+        System.out.println("Table booked! Your Customer ID: " + custId + " | Booking Fee: Rs." + bookingFee);
 
-        // Process payment and booking
-        if (processTableBookingPayment(booking, s)) 
+        System.out.print("Pay booking fee (Rs." + bookingFee + "): ");
+        int paid = s.nextInt();
+        if (paid == bookingFee)
         {
-            tableArr[tableNumber - 1] = true; // Mark as booked
-            bookings.add(booking);
+            booking.paymentStatus = "paid";
+            paidBookings.add(booking);
+            System.out.println("Booking confirmed and paid!");
+        }
+        else
+        {
+            System.out.println("Incorrect amount. Booking not paid.");
         }
     }
 
-    // Payment logic for table booking
-    public static boolean processTableBookingPayment(TableBooking booking, Scanner s) {
-        // Check for duplicate: same customerName, phone, tableType, and tableNumber
-        for (TableBooking b : paidBookings) {
-            if (
-                b.customerName.equalsIgnoreCase(booking.customerName)
-                && b.phone.equals(booking.phone)
-                && b.tableType.equals(booking.tableType)
-                && b.tableNumber == booking.tableNumber
-            ) {
-                System.out.println("This table booking has already been paid for. Duplicate payment not allowed.");
-                return false;
+    public static void printAvailableTables()
+    {
+        System.out.println("Available tables:");
+        printTableStatus("Table2", tables2);
+        printTableStatus("Table4", tables4);
+        printTableStatus("Table6", tables6);
+        printTableStatus("Table8", tables8);
+        printTableStatus("Table10", tables10);
+    }
+
+    public static void printTableStatus(String name, boolean[] arr)
+    {
+        System.out.print(name + ": ");
+        boolean found = false;
+        for (int i = 0; i < arr.length; i++)
+        {
+            if (!arr[i])
+            {
+                System.out.print((i + 1) + " ");
+                found = true;
             }
         }
-
-        // OTP logic
-        Random rand = new Random();
-        int otp = 1000 + rand.nextInt(9000);
-        System.out.println("To confirm table booking, your OTP is: " + otp);
-
-        while (true) {
-            System.out.print("Enter the OTP: ");
-            int enteredOtp = s.nextInt();
-            if (enteredOtp == otp) break;
-            System.out.println("Incorrect OTP. Please try again.");
+        if (!found)
+        {
+            System.out.print("None");
         }
-
-        // Amount logic
-        while (true) {
-            System.out.print("Enter booking fee amount (Rs." + booking.bookingFee + "): ");
-            int enteredAmount = s.nextInt();
-            if (enteredAmount == booking.bookingFee) break;
-            System.out.println("Incorrect amount. Please enter the exact booking fee.");
-        }
-
-        booking.paymentStatus = "paid";
-        paidBookings.add(booking);
-        System.out.println("Payment successful. Table booked!");
-        booking.display();
-        return true;
+        System.out.println();
     }
 
-    public static void printAvailableTables() 
-    {
-        System.out.println("Available 2-seater tables: " + countAvailable(tables2));
-        System.out.println("Available 4-seater tables: " + countAvailable(tables4));
-        System.out.println("Available 6-seater tables: " + countAvailable(tables6));
-        System.out.println("Available 8-seater tables: " + countAvailable(tables8));
-        System.out.println("Available 10-seater tables: " + countAvailable(tables10));
-    }
-
-    public static int countAvailable(boolean[] arr) 
-    {
-        int count = 0;
-        for (boolean b : arr) if (!b) count++;
-        return count;
-    }
-
-    public static void searchOrderById(int id) 
+    public static void checkPaymentStatus(int checkId)
     {
         boolean found = false;
-        for (Order o : paidOrders) 
+        for (Order o : paidOrders)
         {
-            if (o.orderId == id) 
+            if (o.orderId == checkId)
+            {
+                System.out.println("Order ID: " + checkId + " | Payment Status: " + o.paymentStatus);
+                found = true;
+                break;
+            }
+        }
+        if (!found)
+        {
+            for (Order o : unpaidOrders)
+            {
+                if (o.orderId == checkId)
+                {
+                    System.out.println("Order ID: " + checkId + " | Payment Status: " + o.paymentStatus);
+                    found = true;
+                    break;
+                }
+            }
+        }
+        if (!found)
+        {
+            System.out.println("Order ID not found.");
+        }
+    }
+
+    public static void searchOrderById(int orderIdSearch)
+    {
+        for (Order o : paidOrders)
+        {
+            if (o.orderId == orderIdSearch)
             {
                 o.display();
-                found = true;
-                break;
+                return;
             }
         }
-        if (!found) System.out.println("Order not found or not paid.");
-    }
-
-    public static void checkPaymentStatus(int id) 
-    {
-        boolean found = false;
-        for (Order o : paidOrders) 
+        for (Order o : unpaidOrders)
         {
-            if (o.orderId == id) 
+            if (o.orderId == orderIdSearch)
             {
-                System.out.println("Order ID: " + id + " | Payment Status: " + o.paymentStatus);
-                found = true;
-                break;
+                o.display();
+                return;
             }
         }
-        if (!found) System.out.println("Order not found or not paid.");
+        System.out.println("Order ID not found.");
     }
 }
