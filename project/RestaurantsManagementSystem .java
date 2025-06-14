@@ -1,70 +1,86 @@
 import java.util.*;
 
-public class RestaurantsManagementSystem {
+public class RestaurantsManagementSystem 
+{
 
-    static class MenuItem {
+    static class MenuItem 
+    {
         private int id;
         private String name;
-        private double price; // Changed to double for better price handling
+        private double price;
 
-        public MenuItem(int id, String name, double price) {
+        public MenuItem(int id, String name, double price) 
+        {
             this.id = id;
             this.name = name;
             this.price = price;
         }
 
-        public int getId() {
+        public int getId() 
+        {
             return id;
         }
 
-        public String getName() {
+        public String getName() 
+        {
             return name;
         }
 
-        public double getPrice() { // Changed return type to double
+        public double getPrice() 
+        {
             return price;
         }
 
         @Override
-        public String toString() {
+        public String toString() 
+        {
             return "ID: " + id + " | " + name + " - Rs." + price;
         }
     }
 
-    static class Order {
+    static class Order 
+    {
         int orderId;
         List<MenuItem> items = new ArrayList<>();
         String status = "placed";
         String paymentStatus = "pending";
-        double discountApplied = 0; // Changed to double
+        double discountApplied = 0; 
 
-        public Order(int orderId) {
+        public Order(int orderId) 
+        {
             this.orderId = orderId;
         }
 
-        void addItem(MenuItem item) {
+        void addItem(MenuItem item) 
+        {
             items.add(item);
         }
 
-        double getPrice() { // Changed return type to double
+        double getPrice() 
+        { 
             double total = 0;
-            for (MenuItem item : items) {
+            for (MenuItem item : items) 
+            {
                 total += item.getPrice();
             }
             return total;
         }
 
-        double getFinalPrice() { // Changed return type to double
+        double getFinalPrice() 
+        { 
             return getPrice() - discountApplied;
         }
 
-        public void display() {
+        public void display() 
+        {
             System.out.println("Order ID: " + orderId);
-            for (MenuItem item : items) {
+            for (MenuItem item : items) 
+            {
                 System.out.println("Item: " + item.getName() + " | Price: Rs." + item.getPrice());
             }
             System.out.println("Total Price: Rs." + String.format("%.2f", getPrice()));
-            if (discountApplied > 0) {
+            if (discountApplied > 0) 
+            {
                 System.out.println("Discount Applied: Rs." + String.format("%.2f", discountApplied));
                 System.out.println("Final Price: Rs." + String.format("%.2f", getFinalPrice()));
             }
@@ -73,7 +89,8 @@ public class RestaurantsManagementSystem {
         }
     }
 
-    static class TableBooking {
+    static class TableBooking 
+    {
         String tableType;
         int tableNumber;
         String customerName;
@@ -83,7 +100,8 @@ public class RestaurantsManagementSystem {
         String paymentStatus = "pending";
         double bookingFee; // Changed to double
 
-        public TableBooking(String tableType, int tableNumber, String customerName, String phone, int seats, String customerId, double bookingFee) {
+        public TableBooking(String tableType, int tableNumber, String customerName, String phone, int seats, String customerId, double bookingFee) 
+        {
             this.tableType = tableType;
             this.tableNumber = tableNumber;
             this.customerName = customerName;
