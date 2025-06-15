@@ -1,86 +1,70 @@
 import java.util.*;
 
-public class RestaurantsManagementSystem 
-{
+public class RestaurantsManagementSystem {
 
-    static class MenuItem 
-    {
+    static class MenuItem {
         private int id;
         private String name;
         private double price;
 
-        public MenuItem(int id, String name, double price) 
-        {
+        public MenuItem(int id, String name, double price) {
             this.id = id;
             this.name = name;
             this.price = price;
         }
 
-        public int getId() 
-        {
+        public int getId() {
             return id;
         }
 
-        public String getName() 
-        {
+        public String getName() {
             return name;
         }
 
-        public double getPrice() 
-        {
+        public double getPrice() {
             return price;
         }
 
         @Override
-        public String toString() 
-        {
-            return "ID: " + id + " | " + name + " - Rs." + price;
+        public String toString() {
+            return "ID: " + id + " | " + name + " - Rs." + String.format("%.2f", price);
         }
     }
 
-    static class Order 
-    {
+    static class Order {
         int orderId;
         List<MenuItem> items = new ArrayList<>();
         String status = "placed";
         String paymentStatus = "pending";
-        double discountApplied = 0; 
+        double discountApplied = 0;
 
-        public Order(int orderId) 
-        {
+        public Order(int orderId) {
             this.orderId = orderId;
         }
 
-        void addItem(MenuItem item) 
-        {
+        void addItem(MenuItem item) {
             items.add(item);
         }
 
-        double getPrice() 
-        { 
+        double getPrice() {
             double total = 0;
-            for (MenuItem item : items) 
-            {
+            for (MenuItem item : items) {
                 total += item.getPrice();
             }
             return total;
         }
 
-        double getFinalPrice() 
-        { 
+        double getFinalPrice() {
             return getPrice() - discountApplied;
         }
 
-        public void display() 
-        {
+        public void display() {
             System.out.println("Order ID: " + orderId);
-            for (MenuItem item : items) 
-            {
-                System.out.println("Item: " + item.getName() + " | Price: Rs." + item.getPrice());
+            for (MenuItem item : items) {
+                System.out.println("Item: " + item.getName() + " | Price: Rs." + String.format("%.2f", item.getPrice()));
             }
             System.out.println("Total Price: Rs." + String.format("%.2f", getPrice()));
-            if (discountApplied > 0) 
-            {
+            if (discountApplied > 0) {
                 System.out.println("Discount Applied: Rs." + String.format("%.2f", discountApplied));
                 System.out.println("Final Price: Rs." + String.format("%.2f", getFinalPrice()));
             }
@@ -89,8 +73,7 @@ public class RestaurantsManagementSystem
         }
     }
 
-    static class TableBooking 
-    {
+    static class TableBooking {
         String tableType;
         int tableNumber;
         String customerName;
@@ -98,10 +81,9 @@ public class RestaurantsManagementSystem
         int seats;
         String customerId;
         String paymentStatus = "pending";
-        double bookingFee; // Changed to double
+        double bookingFee;
 
-        public TableBooking(String tableType, int tableNumber, String customerName, String phone, int seats, String customerId, double bookingFee) 
-        {
+        public TableBooking(String tableType, int tableNumber, String customerName, String phone, int seats, String customerId, double bookingFee) {
             this.tableType = tableType;
             this.tableNumber = tableNumber;
             this.customerName = customerName;
@@ -123,14 +105,14 @@ public class RestaurantsManagementSystem
     }
 
     static List<MenuItem> menuList = new ArrayList<>();
-    static List<MenuItem> cart = new ArrayList<>(); // This cart is only for current unplaced order
+    static List<MenuItem> cart = new ArrayList<>();
     static List<TableBooking> bookings = new ArrayList<>();
-    static List<TableBooking> paidBookings = new ArrayList<>(); // To track paid table bookings separately
-    static List<Order> allOrders = new ArrayList<>(); // To store all placed orders (paid/unpaid)
-    static int orderCounter = 1; // Renamed from orderId to avoid confusion with Order.orderId
-    static int customerIdCounter = 1001; // Renamed from customerId
+    static List<TableBooking> paidBookings = new ArrayList<>();
+    static List<Order> allOrders = new ArrayList<>();
+    static int orderCounter = 1;
+    static int customerIdCounter = 1001;
+    static int menuItemIdCounter = 101;
 
-    // Table availability arrays
     static boolean[] tables10 = new boolean[10];
     static boolean[] tables8 = new boolean[10];
     static boolean[] tables6 = new boolean[10];
@@ -138,59 +120,50 @@ public class RestaurantsManagementSystem
     static boolean[] tables2 = new boolean[10];
     static Map<Integer, MenuItem> menuMap = new HashMap<>();
 
-    // The current order being built by the customer
     static Order currentOrder = null;
 
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) {
         Scanner s = new Scanner(System.in);
         initializeMenu();
         System.out.println("Welcome to the Shield Restaurant");
-        boolean valided = true;
+        boolean runningSystem = true;
         System.out.println("1. Admin access");
         System.out.println("2. Customer access");
         System.out.print("Please select your access level (1 or 2): ");
         int accessLevel = s.nextInt();
-        while (valided)
-        {
-            if (accessLevel == 2)
-            {
+
+        while (runningSystem) {
+            if (accessLevel == 2) {
                 customerAccess(s);
-            }
-            accessLevel = 1;
-            if (accessLevel == 1)
-            {
+            } else if (accessLevel == 1) {
                 System.out.print("Enter 4-digit admin PIN: ");
                 int pin = s.nextInt();
-                if (pin == 2004)
-                {
+                if (pin == 2004) {
                     adminAccess(s);
-                }
-                else
-                {
+                } else {
                     System.out.println("Invalid PIN. Access denied.");
                 }
+            } else {
+                System.out.println("Invalid access level. Please enter 1 or 2.");
             }
-            System.out.print("Next access level (1 for Exit, 2 for Customer): ");
+
+            System.out.print("Next access level (1 for Admin, 2 for Customer, 0 to Exit): ");
             accessLevel = s.nextInt();
-            if (accessLevel == 2)
-                valided = true;
-            else
-            {
-                valided = false;
+            if (accessLevel == 0) {
+                runningSystem = false;
                 System.out.println("Exiting the system. Thank you!");
             }
         }
     }
 
     public static void initializeMenu() {
-        int id = 101;
         String[] names = {"chicken biryani", "mutton biryani", "veg biryani", "chicken curry", "mutton curry", "veg curry", "chicken tikka", "mutton tikka", "veg tikka", "chicken kebab", "mutton kebab", "veg kebab", "soft drink", "water", "salad", "dessert"};
         double[] prices = {150.00, 200.00, 100.00, 180.00, 220.00, 120.00, 160.00, 210.00, 130.00, 170.00, 230.00, 140.00, 50.00, 20.00, 30.00, 80.00};
         for (int i = 0; i < names.length; i++) {
-            MenuItem item = new MenuItem(id, names[i], prices[i]);
+            MenuItem item = new MenuItem(menuItemIdCounter, names[i], prices[i]);
             menuList.add(item);
-            menuMap.put(id++, item);
+            menuMap.put(menuItemIdCounter, item);
+            menuItemIdCounter++;
         }
     }
 
@@ -263,9 +236,17 @@ public class RestaurantsManagementSystem
             return;
         }
         currentOrder.status = "placed";
-        allOrders.add(currentOrder); // Add to allOrders list
+        boolean orderExists = false;
+        for (Order o : allOrders) {
+            if (o.orderId == currentOrder.orderId) {
+                orderExists = true;
+                break;
+            }
+        }
+        if (!orderExists) {
+            allOrders.add(currentOrder);
+        }
         System.out.println("Order " + currentOrder.orderId + " has been placed.");
-        // We keep currentOrder active until confirmed/paid or explicitly cleared
     }
 
     public static void confirmOrder(Scanner s) {
@@ -314,13 +295,10 @@ public class RestaurantsManagementSystem
 
         currentOrder.paymentStatus = "paid";
         currentOrder.status = "confirmed and paid";
-        // If the order was in unpaidOrders, remove it and add to paidOrders
-        allOrders.removeIf(o -> o.orderId == currentOrder.orderId); // Remove the existing entry to update
-        allOrders.add(currentOrder); // Add the updated order
-        
-        cart.clear(); // Clear the cart after successful payment
+
+        cart.clear();
         System.out.println("Order " + currentOrder.orderId + " confirmed and paid. Thank you!");
-        currentOrder = null; // Reset current order for the next customer interaction
+        currentOrder = null;
     }
 
     public static void adminAccess(Scanner s) {
@@ -338,7 +316,7 @@ public class RestaurantsManagementSystem
             System.out.println("9. Exit Admin Access");
             System.out.print("Please select an option (1-9): ");
             int choice = s.nextInt();
-            s.nextLine(); // Consume newline
+            s.nextLine();
 
             switch (choice) {
                 case 1:
@@ -349,17 +327,19 @@ public class RestaurantsManagementSystem
                     String name = s.nextLine();
                     System.out.print("Enter price: ");
                     double price = s.nextDouble();
-                    s.nextLine(); // Consume newline
-                    int nextId = menuList.isEmpty() ? 101 : menuList.get(menuList.size() - 1).getId() + 1;
-                    MenuItem newItem = new MenuItem(nextId, name.toLowerCase(), price);
+                    s.nextLine();
+
+                    MenuItem newItem = new MenuItem(menuItemIdCounter, name.toLowerCase(), price);
                     menuList.add(newItem);
-                    menuMap.put(nextId, newItem);
-                    System.out.println("Item added with ID: " + nextId);
+                    menuMap.put(menuItemIdCounter, newItem);
+                    System.out.println("Item added with ID: " + menuItemIdCounter);
+                    menuItemIdCounter++;
                     break;
                 case 3:
                     System.out.print("Enter item ID to remove: ");
                     int idToRemove = s.nextInt();
-                    s.nextLine(); // Consume newline
+                    s.nextLine();
+
                     MenuItem removedItem = menuMap.remove(idToRemove);
                     if (removedItem != null) {
                         menuList.removeIf(item -> item.getId() == idToRemove);
@@ -409,7 +389,7 @@ public class RestaurantsManagementSystem
             System.out.println("1. View Menu");
             System.out.println("2. Add Items to Cart (comma-separated IDs)");
             System.out.println("3. View Cart");
-            System.out.println("4. Place Order"); // Added explicit place order
+            System.out.println("4. Place Order");
             System.out.println("5. Confirm Order and Pay");
             System.out.println("6. Reserve Table");
             System.out.println("7. View My Table Bookings (by Customer ID)");
@@ -419,7 +399,7 @@ public class RestaurantsManagementSystem
             System.out.println("11. Exit Customer Access");
             System.out.print("Enter your choice: ");
             int ch = s.nextInt();
-            s.nextLine(); // Consume newline
+            s.nextLine();
 
             switch (ch) {
                 case 1:
@@ -433,7 +413,7 @@ public class RestaurantsManagementSystem
                     viewCart();
                     break;
                 case 4:
-                    placeOrder(); // New option to place order without immediate payment
+                    placeOrder();
                     break;
                 case 5:
                     confirmOrder(s);
@@ -477,8 +457,6 @@ public class RestaurantsManagementSystem
                         String abandon = s.nextLine().trim().toLowerCase();
                         if (abandon.equals("yes")) {
                             System.out.println("Order abandoned. Clearing cart.");
-                            // Optionally, if the order was "placed" but not paid, you might want to mark it as cancelled or unpaid
-                            // For simplicity, we just clear the cart and current order reference here
                             cart.clear();
                             currentOrder = null;
                         } else {
@@ -486,7 +464,7 @@ public class RestaurantsManagementSystem
                             confirmOrder(s);
                         }
                     }
-                    return; // Exit customer access
+                    return;
                 default:
                     System.out.println("Invalid option. Please try again.");
             }
@@ -545,7 +523,7 @@ public class RestaurantsManagementSystem
 
         for (int i = 0; i < tableArr.length; i++) {
             if (!tableArr[i]) {
-                tableArr[i] = true; // Mark as booked
+                tableArr[i] = true;
                 tableNumber = i + 1;
                 break;
             }
