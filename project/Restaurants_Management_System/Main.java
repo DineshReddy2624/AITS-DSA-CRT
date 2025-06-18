@@ -13,7 +13,8 @@ import java.sql.SQLException;
 import java.util.*;
 
 
-public class Main extends Application {
+public class Main extends Application
+{
 
     // --- Data Classes (moved to separate files for better organization) ---
     // You'll create MenuItem.java, Order.java, TableBooking.java
@@ -607,7 +608,7 @@ public class Main extends Application {
         });
 
         Button addBtn = new Button("Add to Cart");
-        Button cancelBtn = new Button("Cancel");
+        Button cancelBtn = new Button("Done");
 
         Label msgLabel = new Label();
         msgLabel.setStyle("-fx-text-fill: green;");
@@ -697,6 +698,7 @@ public class Main extends Application {
         TextInputDialog couponDialog = new TextInputDialog();
         couponDialog.setTitle("Coupon Code");
         couponDialog.setHeaderText("Do you have a coupon code? Enter or leave blank:");
+        couponDialog.setHeaderText("The Coupon is applied only for Ordering More than 500");
         couponDialog.setContentText("Coupon:");
 
         Optional<String> couponInput = couponDialog.showAndWait();
@@ -705,11 +707,11 @@ public class Main extends Application {
         double discount = 0;
         String couponMessage = "";
 
-        if (coupon.equalsIgnoreCase("SHIELD20")) {
+        if (currentOrder.getPrice() >= 500 && coupon.equalsIgnoreCase("SHIELD2026")) {
             discount = currentOrder.getPrice() * 0.20;
             couponMessage = "Coupon applied: 20% off. Discount: Rs." + String.format("%.2f", discount);
         } else if (!coupon.isEmpty()) {
-            couponMessage = "Invalid coupon code. No discount applied.";
+            couponMessage = "Invalid coupon code or order total less than Rs.500. No discount applied.";
         } else {
             couponMessage = "No coupon entered.";
         }
@@ -736,28 +738,34 @@ public class Main extends Application {
         int otp = 1000 + rand.nextInt(9000); // 4-digit OTP
 
         TextInputDialog otpDialog = new TextInputDialog();
-        otpDialog.setTitle("Payment OTP");
-        otpDialog.setHeaderText("OTP for payment is: " + otp + "\nEnter the OTP to confirm payment for Rs." + String.format("%.2f", finalPrice) + ":");
+        otpDialog.setTitle("Payment Confirmation");
+        otpDialog.setHeaderText("Your OTP is: " + otp + "\nEnter OTP to confirm payment for Rs." + String.format("%.2f", finalPrice));
         otpDialog.setContentText("OTP:");
 
-        Optional<String> otpInput = otpDialog.showAndWait();
-
-        if (otpInput.isPresent() && otpInput.get().equals(String.valueOf(otp))) {
+        Optional<String> result = otpDialog.showAndWait();
+        if (result.isPresent() && result.get().equals(String.valueOf(otp))) {
+            currentOrder.status = "Confirmed";
             currentOrder.paymentStatus = "paid";
-            currentOrder.status = "confirmed";
-            // Increment orderCounter only when a new order is successfully confirmed
-            currentOrder.orderId = orderCounter++;
+            currentOrder.orderId = orderCounter++; // Assign and increment order ID
             allOrders.add(currentOrder);
-            DatabaseManager.saveOrder(currentOrder); // Save order to database
-            customerOutput.setText("Order confirmed and paid! Your Order ID: " + currentOrder.orderId +
-                                   "\nTotal Amount: Rs." + String.format("%.2f", currentOrder.getPrice()) +
-                                   "\nDiscount Applied: Rs." + String.format("%.2f", currentOrder.discountApplied) +
-                                   "\nFinal Amount Paid (Net): Rs." + String.format("%.2f", finalPrice));
-            currentOrder = null; // reset cart
+            DatabaseManager.saveOrder(currentOrder); // Save the confirmed order to DB
+
+            customerOutput.setText("Order Confirmed! Your Order ID is: " + currentOrder.orderId +
+                                   "\nTotal Amount Paid: Rs." + String.format("%.2f", finalPrice) +
+                                   "\n" + couponMessage);
+            Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
+            successAlert.setTitle("Payment Successful");
+            successAlert.setHeaderText(null);
+            successAlert.setContentText("Payment successful! Order ID: " + currentOrder.orderId);
+            successAlert.showAndWait();
+            currentOrder = null; // Clear current order after confirmation
         } else {
-            customerOutput.setText("OTP incorrect. Payment failed. Order not confirmed.");
-            // If payment fails, we don't save the order as "confirmed" or "paid".
-            // You might decide to save it as "pending_payment" if you want to track failed attempts.
+            customerOutput.setText("Payment failed or OTP incorrect. Order not confirmed.");
+            Alert failAlert = new Alert(Alert.AlertType.ERROR);
+            failAlert.setTitle("Payment Failed");
+            failAlert.setHeaderText(null);
+            failAlert.setContentText("Payment failed or OTP incorrect.");
+            failAlert.showAndWait();
         }
     }
 
@@ -765,178 +773,149 @@ public class Main extends Application {
     private void showReserveTable(TextArea customerOutput) {
         Stage stage = new Stage();
         stage.setTitle("Reserve Table");
+        VBox root = new VBox(15); // Increased spacing
+        root.setPadding(new Insets(20));
+        root.setAlignment(Pos.TOP_LEFT);
 
-        VBox root = new VBox(10);
-        root.setPadding(new Insets(10));
-        root.setAlignment(Pos.CENTER);
+        Label title = new Label("Table Reservation");
+        title.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
 
-        TextField peopleField = new TextField();
-        peopleField.setPromptText("Number of People");
-        peopleField.setTooltip(new Tooltip("Enter the number of people for the booking (1-10)"));
+        // Availability Display Area
+        TextArea availabilityArea = new TextArea();
+        availabilityArea.setEditable(false);
+        availabilityArea.setPrefHeight(150);
+        availabilityArea.setPromptText("Click 'Check Available Tables' to see current availability.");
+
+        Button checkAvailabilityBtn = new Button("Check Available Tables");
+        checkAvailabilityBtn.setPrefWidth(200);
+
+        // Call the helper method to update the display
+        checkAvailabilityBtn.setOnAction(e -> updateAvailabilityDisplay(availabilityArea));
+
+        HBox tableTypeSelection = new HBox(10);
+        tableTypeSelection.setAlignment(Pos.CENTER_LEFT);
+        Label typeLabel = new Label("Table Type (Seats):");
+        ComboBox<String> typeComboBox = new ComboBox<>();
+        typeComboBox.getItems().addAll("Table2", "Table4", "Table6", "Table8", "Table10");
+        typeComboBox.setPromptText("Select type");
+        tableTypeSelection.getChildren().addAll(typeLabel, typeComboBox);
+
+        HBox tableNumberSelection = new HBox(10);
+        tableNumberSelection.setAlignment(Pos.CENTER_LEFT);
+        Label numberLabel = new Label("Table Number (1-10):");
+        TextField numberField = new TextField();
+        numberField.setPromptText("Enter number");
+        numberField.setPrefWidth(80);
+        tableNumberSelection.getChildren().addAll(numberLabel, numberField);
 
         TextField nameField = new TextField();
         nameField.setPromptText("Your Name");
-
         TextField phoneField = new TextField();
-        phoneField.setPromptText("Phone Number");
+        phoneField.setPromptText("Your Phone Number");
 
         Label msgLabel = new Label();
         msgLabel.setWrapText(true);
         msgLabel.setStyle("-fx-text-fill: red;");
 
         Button reserveBtn = new Button("Reserve");
-        Button cancelBtn = new Button("Cancel");
+        Button cancelBtn = new Button("Done");
+
+        HBox buttonBox = new HBox(10);
+        buttonBox.setAlignment(Pos.CENTER);
+        buttonBox.getChildren().addAll(reserveBtn, cancelBtn);
+
 
         reserveBtn.setOnAction(e -> {
-            try {
-                int people = Integer.parseInt(peopleField.getText().trim());
-                String name = nameField.getText().trim();
-                String phone = phoneField.getText().trim();
+            String type = typeComboBox.getValue();
+            String numberText = numberField.getText().trim();
+            String name = nameField.getText().trim();
+            String phone = phoneField.getText().trim();
 
-                if (people <= 0 || name.isEmpty() || phone.isEmpty()) {
-                    msgLabel.setText("Fill all fields with valid data.");
+            if (type == null || numberText.isEmpty() || name.isEmpty() || phone.isEmpty()) {
+                msgLabel.setText("Please fill all fields.");
+                return;
+            }
+
+            try {
+                int number = Integer.parseInt(numberText);
+                if (number < 1 || number > 10) {
+                    msgLabel.setText("Table number must be between 1 and 10.");
                     return;
                 }
 
-                // The reserveTableLogic handles messages and database updates
-                boolean reserved = reserveTableLogic(people, name, phone, msgLabel);
-                if (reserved) {
-                    customerOutput.setText(msgLabel.getText()); // Copy success message to main output
-                    stage.close();
-                } else {
-                    customerOutput.setText("Table reservation failed: " + msgLabel.getText()); // Copy failure message
+                boolean[] tablesArray;
+                String tableTypeString;
+                switch (type) {
+                    case "Table2": tablesArray = tables2; tableTypeString = "Table of 2"; break;
+                    case "Table4": tablesArray = tables4; tableTypeString = "Table of 4"; break;
+                    case "Table6": tablesArray = tables6; tableTypeString = "Table of 6"; break;
+                    case "Table8": tablesArray = tables8; tableTypeString = "Table of 8"; break;
+                    case "Table10": tablesArray = tables10; tableTypeString = "Table of 10"; break;
+                    default:
+                        msgLabel.setText("Invalid table type selected.");
+                        return;
                 }
 
+                if (tablesArray[number - 1]) {
+                    msgLabel.setText("Table " + type + " (number " + number + ") is already booked.");
+                } else {
+                    tablesArray[number - 1] = true; // Mark as booked
+                    String customerId = "CUST" + (customerIdCounter++); // Generate customer ID
+                    TableBooking newBooking = new TableBooking(customerId, orderCounter, name, phone, number, type, number);
+                    bookings.add(newBooking);
+                    DatabaseManager.saveTableBooking(newBooking); // Save to database
+
+                    msgLabel.setStyle("-fx-text-fill: green;");
+                    msgLabel.setText("Table " + type + " (number " + number + ") reserved for " + name +
+                            ". Your Customer ID: " + customerId);
+                    customerOutput.setText("Table reservation successful for " + name + " (ID: " + customerId + ")");
+                    updateAvailabilityDisplay(availabilityArea); // Refresh availability after booking
+                }
             } catch (NumberFormatException ex) {
-                msgLabel.setText("Number of people must be a number.");
+                msgLabel.setText("Invalid table number.");
             }
         });
 
         cancelBtn.setOnAction(e -> stage.close());
 
-        root.getChildren().addAll(new Label("Enter Reservation Details:"), peopleField, nameField, phoneField,
-                reserveBtn, cancelBtn, msgLabel);
+        root.getChildren().addAll(title, checkAvailabilityBtn, availabilityArea, new Separator(),
+                                  new Label("Reserve a table:"), tableTypeSelection, tableNumberSelection,
+                                  nameField, phoneField, buttonBox, msgLabel);
 
-        stage.setScene(new Scene(root, 300, 300));
+        stage.setScene(new Scene(new ScrollPane(root), 450, 600)); // Adjusted height
         stage.show();
+        updateAvailabilityDisplay(availabilityArea); // Initial display of availability
     }
 
-    // --- Reservation Logic ---
-    private boolean reserveTableLogic(int people, String name, String phone, Label msgLabel) {
-        String tableType = "";
-        int tableNumber = -1;
-        int seats = 0;
-        double bookingFee = 0;
-        boolean[] tableArr = null;
+    // Helper method to update the table availability display
+    private void updateAvailabilityDisplay(TextArea availabilityArea) {
+        StringBuilder sb = new StringBuilder("Current Table Availability:\n");
+        appendTableStatus(sb, "Table of 2 (Table2)", tables2);
+        appendTableStatus(sb, "Table of 4 (Table4)", tables4);
+        appendTableStatus(sb, "Table of 6 (Table6)", tables6);
+        appendTableStatus(sb, "Table of 8 (Table8)", tables8);
+        appendTableStatus(sb, "Table of 10 (Table10)", tables10);
+        availabilityArea.setText(sb.toString());
+    }
 
-        if (people <= 2) {
-            tableType = "Table2";
-            seats = 2;
-            tableArr = tables2;
-            bookingFee = 100.00;
-        } else if (people <= 4) {
-            tableType = "Table4";
-            seats = 4;
-            tableArr = tables4;
-            bookingFee = 200.00;
-        } else if (people <= 6) {
-            tableType = "Table6";
-            seats = 6;
-            tableArr = tables6;
-            bookingFee = 300.00;
-        } else if (people <= 8) {
-            tableType = "Table8";
-            seats = 8;
-            tableArr = tables8;
-            bookingFee = 400.00;
-        } else if (people <= 10) {
-            tableType = "Table10";
-            seats = 10;
-            tableArr = tables10;
-            bookingFee = 500.00;
-        } else {
-            msgLabel.setText("We don't have tables for more than 10 people.");
-            return false;
-        }
-
-        // Find an available table
-        for (int i = 0; i < tableArr.length; i++) {
-            if (!tableArr[i]) {
-                tableArr[i] = true; // Mark as occupied
-                tableNumber = i + 1;
-                break;
-            }
-        }
-
-        if (tableNumber == -1) {
-            msgLabel.setText("Sorry, no available " + tableType + " tables for " + seats + " people.");
-            return false;
-        }
-
-        String custId = "CUST" + customerIdCounter++;
-        TableBooking booking = new TableBooking(tableType, tableNumber, name, phone, seats, custId, bookingFee);
-
-        // This is crucial: Save the booking to the database immediately
-        DatabaseManager.saveTableBooking(booking);
-        bookings.add(booking); // Add to in-memory list
-
-        // Payment simulation dialog for booking fee
-        TextInputDialog confirmDialog = new TextInputDialog();
-        confirmDialog.setTitle("Booking Payment Confirmation");
-        confirmDialog.setHeaderText("Table booked! Your Customer ID: " + custId +
-                "\nBooking Fee: Rs." + String.format("%.2f", bookingFee) +
-                "\nConfirm payment for booking fee? (yes/no)");
-        confirmDialog.setContentText("Enter 'yes' to pay now:");
-
-        Optional<String> confirmation = confirmDialog.showAndWait();
-        if (confirmation.isPresent() && confirmation.get().trim().equalsIgnoreCase("yes")) {
-            TextInputDialog paymentDialog = new TextInputDialog();
-            paymentDialog.setTitle("Enter Payment Amount");
-            paymentDialog.setHeaderText("Booking Fee: Rs." + String.format("%.2f", bookingFee) +
-                    "\nEnter payment amount:");
-            paymentDialog.setContentText("Amount:");
-
-            Optional<String> paymentInput = paymentDialog.showAndWait();
-            if (paymentInput.isPresent()) {
-                try {
-                    double paidAmount = Double.parseDouble(paymentInput.get().trim());
-                    if (paidAmount == bookingFee) {
-                        booking.paymentStatus = "paid";
-                        paidBookings.add(booking); // Add to paid bookings list (if you need it)
-                        DatabaseManager.updateTableBookingPaymentStatus(booking.customerId, "paid"); // Update DB
-                        msgLabel.setText("Booking confirmed and paid! Customer ID: " + custId + ". Table " + tableType + " #" + tableNumber + " booked.");
-                        return true;
-                    } else {
-                        // Payment amount mismatch
-                        msgLabel.setText("Incorrect amount (Rs." + String.format("%.2f", paidAmount) + " received). Booking not fully paid. Please pay remaining Rs." + String.format("%.2f", bookingFee - paidAmount) + " at the counter.");
-                        // Payment status remains "pending" in DB unless you explicitly set it to "partially_paid"
-                        return false;
-                    }
-                } catch (NumberFormatException e) {
-                    msgLabel.setText("Invalid payment amount entered. Booking not paid. Please pay at the counter.");
-                    return false;
-                }
-            } else {
-                msgLabel.setText("Payment cancelled. Booking not paid. Please pay at the counter upon arrival.");
-                return false;
-            }
-        } else {
-            msgLabel.setText("Booking not paid. Please pay at the counter upon arrival. Customer ID: " + custId + ". Table " + tableType + " #" + tableNumber + " booked.");
-            return false;
+    private void appendTableStatus(StringBuilder sb, String typeLabel, boolean[] tables) {
+        sb.append("\n").append(typeLabel).append(":\n");
+        for (int i = 0; i < tables.length; i++) {
+            sb.append("  - Table ").append(i + 1).append(": ").append(tables[i] ? "Booked" : "Available").append("\n");
         }
     }
 
-    // --- Customer: Search Order By ID ---
+
+    // --- Customer: Search Order by ID ---
     private void showSearchOrderById(TextArea customerOutput) {
         Stage stage = new Stage();
-        stage.setTitle("Search Order By ID");
-
+        stage.setTitle("Search Order");
         VBox root = new VBox(10);
         root.setPadding(new Insets(10));
         root.setAlignment(Pos.CENTER);
 
         TextField orderIdField = new TextField();
-        orderIdField.setPromptText("Enter Order ID");
+        orderIdField.setPromptText("Enter your Order ID");
 
         Label msgLabel = new Label();
         msgLabel.setWrapText(true);
@@ -955,8 +934,12 @@ public class Main extends Application {
                     }
                 }
                 if (foundOrder != null) {
-                    customerOutput.setText(foundOrder.toDetailedString());
-                    stage.close(); // Close search window on success
+                    msgLabel.setText("Order ID: " + id +
+                            "\nOrder Status: " + foundOrder.status +
+                            "\nPayment Status: " + foundOrder.paymentStatus +
+                            "\nTotal Items: " + foundOrder.items.size() +
+                            "\nTotal Price (after discount): Rs." + String.format("%.2f", foundOrder.getFinalPrice()));
+                    customerOutput.setText(msgLabel.getText()); // Also update main customer output
                 } else {
                     msgLabel.setText("Order ID " + id + " not found.");
                 }
@@ -967,9 +950,9 @@ public class Main extends Application {
 
         cancelBtn.setOnAction(e -> stage.close());
 
-        root.getChildren().addAll(new Label("Search order by Order ID:"), orderIdField, searchBtn, cancelBtn, msgLabel);
+        root.getChildren().addAll(new Label("Search for your order details:"), orderIdField, searchBtn, cancelBtn, msgLabel);
 
-        stage.setScene(new Scene(root, 300, 200));
+        stage.setScene(new Scene(root, 300, 250));
         stage.show();
     }
 
