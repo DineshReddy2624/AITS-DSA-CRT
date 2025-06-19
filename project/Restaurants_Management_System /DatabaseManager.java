@@ -21,7 +21,7 @@ public class DatabaseManager {
             stmt.execute(createMenuItemsTable);
             System.out.println("Table 'menu_items' checked/created.");
 
-            // Create orders table - UPDATED for enums and amounts
+            // Create orders table - UPDATED for enums, amounts, and payment method
             String createOrdersTable = "CREATE TABLE IF NOT EXISTS orders (" +
                                        "order_id INT PRIMARY KEY," +
                                        "status VARCHAR(50) NOT NULL," + // Will store OrderStatus enum string
@@ -29,10 +29,21 @@ public class DatabaseManager {
                                        "discount_applied DECIMAL(10, 2)," +
                                        "total_amount DECIMAL(10, 2) NOT NULL DEFAULT 0.00," +
                                        "net_amount DECIMAL(10, 2) NOT NULL DEFAULT 0.00," +
-                                       "order_time DATETIME" +
+                                       "order_time DATETIME," +
+                                       "payment_method VARCHAR(50)" + // New: Column for PaymentMethod
                                        ")";
             stmt.execute(createOrdersTable);
             System.out.println("Table 'orders' checked/created.");
+
+            // Check if 'payment_method' column exists in 'orders' table, add if not
+            try (ResultSet rs = conn.createStatement().executeQuery("SHOW COLUMNS FROM orders LIKE 'payment_method'")) {
+                if (!rs.next()) {
+                    String addPaymentMethodColumn = "ALTER TABLE orders ADD COLUMN payment_method VARCHAR(50) DEFAULT 'Cash'";
+                    stmt.execute(addPaymentMethodColumn);
+                    System.out.println("Added 'payment_method' column to 'orders' table.");
+                }
+            }
+
 
             // Create order_items table (many-to-many relationship)
             String createOrderItemsTable = "CREATE TABLE IF NOT EXISTS order_items (" +
@@ -136,8 +147,8 @@ public class DatabaseManager {
      * @param order The Order object to save.
      */
     public static void saveOrder(Order order) {
-        // Corrected INSERT statement to use enum display values
-        String orderSql = "INSERT INTO orders (order_id, status, payment_status, discount_applied, total_amount, net_amount, order_time) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        // Corrected INSERT statement to use enum display values and new payment_method
+        String orderSql = "INSERT INTO orders (order_id, status, payment_status, discount_applied, total_amount, net_amount, order_time, payment_method) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         String orderItemSql = "INSERT INTO order_items (order_id, menu_item_id, quantity, item_price_at_order) VALUES (?, ?, ?, ?)";
 
         Connection conn = null;
@@ -158,6 +169,7 @@ public class DatabaseManager {
                 pstmtOrder.setDouble(5, calculatedTotalAmount);
                 pstmtOrder.setDouble(6, calculatedNetAmount);
                 pstmtOrder.setTimestamp(7, new Timestamp(new Date().getTime())); // Current timestamp
+                pstmtOrder.setString(8, order.paymentMethod.getDisplayValue()); // New: Save payment method
                 pstmtOrder.executeUpdate();
             }
 
@@ -215,7 +227,8 @@ public class DatabaseManager {
      */
     public static List<Order> loadOrders(Map<Integer, MenuItem> menuMap) {
         List<Order> orders = new ArrayList<>();
-        String orderSql = "SELECT order_id, status, payment_status, discount_applied FROM orders ORDER BY order_id";
+        // Include payment_method in the select query
+        String orderSql = "SELECT order_id, status, payment_status, discount_applied, payment_method FROM orders ORDER BY order_id";
         String orderItemSql = "SELECT menu_item_id, quantity, item_price_at_order FROM order_items WHERE order_id = ?";
 
         Connection conn = null; // Declare connection outside try-with-resources to use in finally
@@ -233,6 +246,9 @@ public class DatabaseManager {
                     order.status = OrderStatus.fromString(rsOrders.getString("status"));
                     order.paymentStatus = PaymentStatus.fromString(rsOrders.getString("payment_status"));
                     order.discountApplied = rsOrders.getDouble("discount_applied");
+                    // New: Load payment method, default to CASH if column not found or value is null/empty
+                    order.paymentMethod = PaymentMethod.fromString(rsOrders.getString("payment_method"));
+
 
                     // Load items for each order
                     try (PreparedStatement pstmtItems = conn.prepareStatement(orderItemSql)) {
@@ -324,6 +340,29 @@ public class DatabaseManager {
             System.err.println("Error updating order status: " + e.getMessage());
         }
     }
+
+    /**
+     * Updates the payment method of a specific order.
+     * @param orderId The ID of the order to update.
+     * @param newMethod The new PaymentMethod enum value.
+     */
+    public static void updateOrderPaymentMethod(int orderId, PaymentMethod newMethod) {
+        String sql = "UPDATE orders SET payment_method = ? WHERE order_id = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, newMethod.getDisplayValue()); // Save enum as string
+            pstmt.setInt(2, orderId);
+            int rowsAffected = pstmt.executeUpdate();
+            if (rowsAffected > 0) {
+                System.out.println("Updated order " + orderId + " payment method to: " + newMethod.getDisplayValue());
+            } else {
+                System.out.println("Order " + orderId + " not found for method update.");
+            }
+        } catch (SQLException e) {
+            System.err.println("Error updating order payment method: " + e.getMessage());
+        }
+    }
+
 
     // --- TableBooking operations ---
 
