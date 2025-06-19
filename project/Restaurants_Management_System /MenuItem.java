@@ -51,4 +51,3 @@ public class MenuItem {
         return id + ": " + name + " - Rs." + String.format("%.2f", price);
     }
 }
-
