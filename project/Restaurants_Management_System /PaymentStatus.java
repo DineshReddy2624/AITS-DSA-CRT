@@ -1,4 +1,9 @@
 package application;
+
+/**
+ * Enum representing the possible payment statuses for orders and bookings.
+ * This ensures consistency and prevents typos in status strings.
+ */
 public enum PaymentStatus {
     PENDING("pending"),
     PAID("paid"),
