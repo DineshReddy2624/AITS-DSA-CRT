@@ -294,14 +294,14 @@ public class Main extends Application {
         Button viewBookingsBtn = createStyledButton("View All Table Bookings");
         Button updateBookingStatusBtn = createStyledButton("Update Table Booking Payment Status"); // New functionality
         Button viewOrdersBtn = createStyledButton("View All Orders");
-        Button checkPaymentStatusBtn = createStyledButton("Update Order Payment Status by ID");
+        Button manageOrderStatusBtn = createStyledButton("Manage Order Status"); // Renamed and refactored
         Button searchMenuBtn = createStyledButton("Search Menu Items by Name");
         Button dailyReportBtn = createStyledButton("Generate Daily Sales Report");
         Button logoutBtn = createSecondaryStyledButton("Logout");
 
         menuButtons.getChildren().addAll(viewMenuBtn, editItemBtn, removeItemBtn,
                                          viewBookingsBtn, updateBookingStatusBtn, viewOrdersBtn,
-                                         checkPaymentStatusBtn, searchMenuBtn, dailyReportBtn,
+                                         manageOrderStatusBtn, searchMenuBtn, dailyReportBtn, // Changed button
                                          new Separator(), logoutBtn); // Separator for visual grouping
 
         root.setLeft(menuButtons);
@@ -343,7 +343,7 @@ public class Main extends Application {
         viewBookingsBtn.setOnAction(e -> displayTabs.getSelectionModel().select(bookingsTab));
         updateBookingStatusBtn.setOnAction(e -> showUpdateTableBookingPaymentStatus());
         viewOrdersBtn.setOnAction(e -> displayTabs.getSelectionModel().select(ordersTab));
-        checkPaymentStatusBtn.setOnAction(e -> showUpdateOrderPaymentStatus());
+        manageOrderStatusBtn.setOnAction(e -> showManageOrderStatusDialog()); // New action for the refactored button
         searchMenuBtn.setOnAction(e -> showSearchMenuItem(reportArea)); // Direct output to reportArea
         dailyReportBtn.setOnAction(e -> generateDailySalesReport(reportArea)); // Direct output to reportArea
         logoutBtn.setOnAction(e -> showAccessSelection());
@@ -448,6 +448,18 @@ public class Main extends Application {
         tableView.setItems(allOrders);
         return tableView;
     }
+
+    /**
+     * Helper to get the Order TableView instance from the Admin Menu layout.
+     */
+    @SuppressWarnings("unchecked")
+    private TableView<Order> getOrderTableView() {
+        BorderPane adminRoot = (BorderPane) primaryStage.getScene().getRoot();
+        TabPane displayTabs = (TabPane) adminRoot.getCenter();
+        Tab ordersTab = displayTabs.getTabs().get(1); // Assuming Orders is the second tab
+        return (TableView<Order>) ordersTab.getContent();
+    }
+
 
     /**
      * Creates and configures a TableView for displaying TableBookings.
@@ -641,45 +653,147 @@ public class Main extends Application {
         });
     }
 
-    // --- Admin: Update Order Payment Status ---
-    private void showUpdateOrderPaymentStatus() {
-        TextInputDialog idDialog = new TextInputDialog();
-        idDialog.setTitle("Update Order Payment Status");
-        idDialog.setHeaderText("Enter the Order ID:");
-        idDialog.setContentText("Order ID:");
+    /**
+     * Admin: Shows a dialog to manage both order status and payment status for an order.
+     */
+    private void showManageOrderStatusDialog() {
+        Stage stage = new Stage();
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.setTitle("Manage Order Status");
 
-        Optional<String> orderIdResult = idDialog.showAndWait();
-        orderIdResult.ifPresent(idText -> {
+        VBox root = new VBox(10);
+        root.setPadding(new Insets(20));
+        root.setAlignment(Pos.CENTER);
+        root.setStyle("-fx-background-color: #fce4ec;"); // Light pink background
+
+        Label title = new Label("Enter Order ID to manage:");
+        title.setStyle("-fx-font-weight: bold; -fx-font-size: 16px;");
+
+        TextField orderIdField = new TextField();
+        orderIdField.setPromptText("Enter Order ID");
+        orderIdField.setPrefWidth(150);
+
+        Button searchBtn = createSmallDialogButton("Search");
+
+        Label currentStatusLabel = new Label("Current Order Status: -");
+        Label currentPaymentStatusLabel = new Label("Current Payment Status: -");
+        currentStatusLabel.setStyle("-fx-font-weight: bold;");
+        currentPaymentStatusLabel.setStyle("-fx-font-weight: bold;");
+
+        ComboBox<OrderStatus> orderStatusComboBox = new ComboBox<>();
+        orderStatusComboBox.setItems(FXCollections.observableArrayList(OrderStatus.values()));
+        orderStatusComboBox.setPromptText("Select New Order Status");
+        orderStatusComboBox.setPrefWidth(200);
+
+        ComboBox<PaymentStatus> paymentStatusComboBox = new ComboBox<>();
+        paymentStatusComboBox.setItems(FXCollections.observableArrayList(PaymentStatus.values()));
+        paymentStatusComboBox.setPromptText("Select New Payment Status");
+        paymentStatusComboBox.setPrefWidth(200);
+
+        Label msgLabel = new Label();
+        msgLabel.setWrapText(true);
+        msgLabel.setStyle("-fx-font-weight: bold;");
+
+        Button updateBtn = createSmallDialogButton("Update");
+        Button cancelBtn = createSmallDialogButton("Close");
+
+        HBox buttonBar = new HBox(10, updateBtn, cancelBtn);
+        buttonBar.setAlignment(Pos.CENTER);
+
+        // Initially disable status controls
+        orderStatusComboBox.setDisable(true);
+        paymentStatusComboBox.setDisable(true);
+        updateBtn.setDisable(true);
+
+        final Order[] foundOrder = {null}; // Array to hold the found order, allowing modification in lambda
+
+        searchBtn.setOnAction(e -> {
             try {
-                int orderId = Integer.parseInt(idText.trim());
-                Order foundOrder = allOrders.stream()
-                                            .filter(o -> o.getOrderId() == orderId) // Use getter
+                int id = Integer.parseInt(orderIdField.getText().trim());
+                foundOrder[0] = allOrders.stream()
+                                            .filter(o -> o.getOrderId() == id)
                                             .findFirst()
                                             .orElse(null);
 
-                if (foundOrder != null) {
-                    ChoiceDialog<PaymentStatus> statusDialog = new ChoiceDialog<>(foundOrder.getPaymentStatus(), PaymentStatus.values()); // Use getter
-                    statusDialog.setTitle("Update Order Payment Status");
-                    statusDialog.setHeaderText("Order ID: " + orderId + "\nCurrent Payment Status: " + foundOrder.getPaymentStatus().getDisplayValue()); // Use getter
-                    statusDialog.setContentText("Select new status:");
+                if (foundOrder[0] != null) {
+                    currentStatusLabel.setText("Current Order Status: " + foundOrder[0].getStatus().getDisplayValue());
+                    currentPaymentStatusLabel.setText("Current Payment Status: " + foundOrder[0].getPaymentStatus().getDisplayValue());
+                    orderStatusComboBox.setValue(foundOrder[0].getStatus());
+                    paymentStatusComboBox.setValue(foundOrder[0].getPaymentStatus());
 
-                    Optional<PaymentStatus> newStatus = statusDialog.showAndWait();
-                    newStatus.ifPresent(statusToSet -> {
-                        foundOrder.paymentStatus = statusToSet; // Directly update public field, or use setter if available
-                        DatabaseManager.updateOrderPaymentStatus(foundOrder.getOrderId(), statusToSet); // Use getter
-                        showAlert(Alert.AlertType.INFORMATION, "Success", "Status Updated", "Order ID: " + orderId + "\nPayment Status Updated to: " + statusToSet.getDisplayValue());
-                        // Refresh the TableView directly
-                        TableView<Order> orderTableView = (TableView<Order>) ((TabPane)((BorderPane) primaryStage.getScene().getRoot()).getCenter()).getTabs().get(1).getContent();
-                        orderTableView.refresh();
-                    });
+                    orderStatusComboBox.setDisable(false);
+                    paymentStatusComboBox.setDisable(false);
+                    updateBtn.setDisable(false);
+                    msgLabel.setText("");
                 } else {
-                    showAlert(Alert.AlertType.WARNING, "Not Found", "Order Not Found", "Order ID " + orderId + " not found.");
+                    currentStatusLabel.setText("Current Order Status: -");
+                    currentPaymentStatusLabel.setText("Current Payment Status: -");
+                    orderStatusComboBox.setDisable(true);
+                    paymentStatusComboBox.setDisable(true);
+                    updateBtn.setDisable(true);
+                    msgLabel.setStyle("-fx-text-fill: red;");
+                    msgLabel.setText("Order ID " + id + " not found.");
                 }
             } catch (NumberFormatException ex) {
-                showAlert(Alert.AlertType.ERROR, "Invalid Input", "Error", "Invalid Order ID. Please enter a number.");
+                msgLabel.setStyle("-fx-text-fill: red;");
+                msgLabel.setText("Invalid Order ID. Please enter a number.");
+                currentStatusLabel.setText("Current Order Status: -");
+                currentPaymentStatusLabel.setText("Current Payment Status: -");
+                orderStatusComboBox.setDisable(true);
+                paymentStatusComboBox.setDisable(true);
+                updateBtn.setDisable(true);
             }
         });
+
+        updateBtn.setOnAction(e -> {
+            if (foundOrder[0] != null) {
+                OrderStatus selectedOrderStatus = orderStatusComboBox.getValue();
+                PaymentStatus selectedPaymentStatus = paymentStatusComboBox.getValue();
+
+                if (selectedOrderStatus != null && selectedPaymentStatus != null) {
+                    // Update in memory
+                    foundOrder[0].status = selectedOrderStatus;
+                    foundOrder[0].paymentStatus = selectedPaymentStatus;
+
+                    // Update in database
+                    DatabaseManager.updateOrderStatus(foundOrder[0].getOrderId(), selectedOrderStatus);
+                    DatabaseManager.updateOrderPaymentStatus(foundOrder[0].getOrderId(), selectedPaymentStatus);
+
+                    showAlert(Alert.AlertType.INFORMATION, "Update Successful", "Order Status Updated",
+                            "Order ID " + foundOrder[0].getOrderId() + " status updated to " + selectedOrderStatus.getDisplayValue() +
+                            " and payment status to " + selectedPaymentStatus.getDisplayValue() + ".");
+
+                    // Refresh the TableView
+                    getOrderTableView().refresh();
+                    stage.close();
+                } else {
+                    msgLabel.setStyle("-fx-text-fill: red;");
+                    msgLabel.setText("Please select both Order Status and Payment Status.");
+                }
+            }
+        });
+
+        cancelBtn.setOnAction(e -> stage.close());
+
+        root.getChildren().addAll(
+            title,
+            new HBox(10, orderIdField, searchBtn),
+            new Separator(),
+            currentStatusLabel,
+            currentPaymentStatusLabel,
+            new Label("New Order Status:"),
+            orderStatusComboBox,
+            new Label("New Payment Status:"),
+            paymentStatusComboBox,
+            msgLabel,
+            buttonBar
+        );
+
+        Scene scene = new Scene(root, 400, 450);
+        stage.setScene(scene);
+        stage.showAndWait();
     }
+
 
     // --- Admin: Update Table Booking Payment Status ---
     private void showUpdateTableBookingPaymentStatus() {
@@ -878,15 +992,15 @@ public class Main extends Application {
         ObservableList<String> itemsInCart = FXCollections.observableArrayList();
         if (currentOrder != null && !currentOrder.items.isEmpty()) {
             // Use a map to count quantities of each unique item
-            Map<Integer, Integer> itemQuantities = new HashMap<>();
-            Map<Integer, MenuItem> uniqueItems = new HashMap<>(); // To get the name and price once
+            Map<String, Integer> itemQuantities = new HashMap<>(); // Changed key to String (item name) for display
+            Map<String, MenuItem> uniqueItems = new HashMap<>(); // To get the name and price once
 
             for (MenuItem item : currentOrder.items) {
-                itemQuantities.put(item.getId(), itemQuantities.getOrDefault(item.getId(), 0) + 1);
-                uniqueItems.put(item.getId(), item);
+                itemQuantities.put(item.getName(), itemQuantities.getOrDefault(item.getName(), 0) + 1);
+                uniqueItems.put(item.getName(), item);
             }
 
-            for (Map.Entry<Integer, Integer> entry : itemQuantities.entrySet()) {
+            for (Map.Entry<String, Integer> entry : itemQuantities.entrySet()) {
                 MenuItem item = uniqueItems.get(entry.getKey());
                 // FIX: Corrected string concatenation for displaying item ID
                 itemsInCart.add(item.getName() + " (x" + entry.getValue() + ") - Rs." + String.format("%.2f", entry.getValue() * item.getPrice()) + " [ID: " + item.getId() + "]");
