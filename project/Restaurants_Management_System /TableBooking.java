@@ -1,4 +1,9 @@
 package application;
+
+/**
+ * Represents a table booking in the restaurant.
+ * Stores customer and table details, along with booking fee and payment status.
+ */
 public class TableBooking {
     // Properties using enums for type safety
     public TableType tableType;
