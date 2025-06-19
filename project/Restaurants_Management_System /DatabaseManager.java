@@ -5,17 +5,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Date; // For timestamps
-
-/**
- * Manages all database interactions for menu items, orders, and table bookings.
- * Handles table creation, saving, loading, updating, and deleting data.
- */
+import java.util.Date;
 public class DatabaseManager {
-
-    /**
-     * Initializes the database by creating necessary tables if they do not already exist.
-     */
     public static void initializeDatabase() {
         try (Connection conn = DBConnection.getConnection();
              Statement stmt = conn.createStatement()) {
@@ -396,4 +387,9 @@ public class DatabaseManager {
             System.err.println("Error updating table booking payment status: " + e.getMessage());
         }
     }
+
+	public static void updateOrderStatus(int orderId, OrderStatus selectedOrderStatus) {
+		// TODO Auto-generated method stub
+		
+	}
 }
