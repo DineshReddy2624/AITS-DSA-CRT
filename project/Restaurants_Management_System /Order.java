@@ -4,11 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
-
-/**
- * Represents a customer order in the restaurant.
- * Stores items, status, payment status, and discount applied.
- */
 public class Order {
     public int orderId;
     public List<MenuItem> items = new ArrayList<>();
