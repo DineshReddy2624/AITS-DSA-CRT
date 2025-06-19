@@ -278,7 +278,7 @@ public class Main extends Application {
         root.setPadding(new Insets(10));
         root.setStyle("-fx-background-color: #e8eaf6;"); // Lighter blue/purple background
 
-        Label titleLabel = new Label("Admin Menu");
+        Label titleLabel = new Label("Admin Portal");
         titleLabel.setStyle("-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #1A237E;");
         BorderPane.setAlignment(titleLabel, Pos.CENTER);
         root.setTop(titleLabel);
@@ -289,8 +289,7 @@ public class Main extends Application {
         menuButtons.setStyle("-fx-background-color: #c5cae9; -fx-border-radius: 8px; -fx-background-radius: 8px;");
 
         Button viewMenuBtn = createStyledButton("View Menu Items");
-        Button addItemBtn = createStyledButton("Add New Menu Item");
-        Button editItemBtn = createStyledButton("Edit Menu Item"); // New functionality
+        Button editItemBtn = createStyledButton("Add Menu Item"); // New functionality
         Button removeItemBtn = createStyledButton("Remove Menu Item by ID");
         Button viewBookingsBtn = createStyledButton("View All Table Bookings");
         Button updateBookingStatusBtn = createStyledButton("Update Table Booking Payment Status"); // New functionality
@@ -300,7 +299,7 @@ public class Main extends Application {
         Button dailyReportBtn = createStyledButton("Generate Daily Sales Report");
         Button logoutBtn = createSecondaryStyledButton("Logout");
 
-        menuButtons.getChildren().addAll(viewMenuBtn, addItemBtn, editItemBtn, removeItemBtn,
+        menuButtons.getChildren().addAll(viewMenuBtn, editItemBtn, removeItemBtn,
                                          viewBookingsBtn, updateBookingStatusBtn, viewOrdersBtn,
                                          checkPaymentStatusBtn, searchMenuBtn, dailyReportBtn,
                                          new Separator(), logoutBtn); // Separator for visual grouping
@@ -339,7 +338,6 @@ public class Main extends Application {
 
         // Event handlers
         viewMenuBtn.setOnAction(e -> displayTabs.getSelectionModel().select(menuTab));
-        addItemBtn.setOnAction(e -> showAddEditMenuItemDialog(null)); // Pass null for add mode
         editItemBtn.setOnAction(e -> showAddEditMenuItemDialog(getMenuTableView().getSelectionModel().getSelectedItem())); // Pass selected for edit mode
         removeItemBtn.setOnAction(e -> showRemoveMenuItem());
         viewBookingsBtn.setOnAction(e -> displayTabs.getSelectionModel().select(bookingsTab));
