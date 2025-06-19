@@ -10,6 +10,7 @@ public class Order {
     // Using enums for status and payment status for better type safety and clarity
     public OrderStatus status = OrderStatus.PLACED;
     public PaymentStatus paymentStatus = PaymentStatus.PENDING;
+    public PaymentMethod paymentMethod = PaymentMethod.CASH; // New: Default payment method
     public double discountApplied = 0; // This explicitly represents the discount amount
 
     /**
@@ -31,6 +32,10 @@ public class Order {
 
     public PaymentStatus getPaymentStatus() {
         return paymentStatus;
+    }
+
+    public PaymentMethod getPaymentMethod() { // New: Getter for payment method
+        return paymentMethod;
     }
 
     public double getDiscountApplied() { // Added getter for discountApplied
@@ -100,6 +105,7 @@ public class Order {
         sb.append("Final Price (Net Amount): Rs.").append(String.format("%.2f", getFinalPrice())).append("\n");
         sb.append("Status: ").append(status.getDisplayValue()).append("\n");
         sb.append("Payment Status: ").append(paymentStatus.getDisplayValue()).append("\n");
+        sb.append("Payment Method: ").append(paymentMethod.getDisplayValue()).append("\n"); // New: Include payment method
         return sb.toString();
     }
 }
