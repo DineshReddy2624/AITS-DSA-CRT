@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Date;
+
 public class DatabaseManager {
     public static void initializeDatabase() {
         try (Connection conn = DBConnection.getConnection();
@@ -302,6 +303,28 @@ public class DatabaseManager {
         }
     }
 
+    /**
+     * Updates the general order status of a specific order.
+     * @param orderId The ID of the order to update.
+     * @param newStatus The new OrderStatus enum value.
+     */
+    public static void updateOrderStatus(int orderId, OrderStatus newStatus) {
+        String sql = "UPDATE orders SET status = ? WHERE order_id = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, newStatus.getDisplayValue()); // Save enum as string
+            pstmt.setInt(2, orderId);
+            int rowsAffected = pstmt.executeUpdate();
+            if (rowsAffected > 0) {
+                System.out.println("Updated order " + orderId + " status to: " + newStatus.getDisplayValue());
+            } else {
+                System.out.println("Order " + orderId + " not found for status update.");
+            }
+        } catch (SQLException e) {
+            System.err.println("Error updating order status: " + e.getMessage());
+        }
+    }
+
     // --- TableBooking operations ---
 
     /**
@@ -387,9 +410,4 @@ public class DatabaseManager {
             System.err.println("Error updating table booking payment status: " + e.getMessage());
         }
     }
-
-	public static void updateOrderStatus(int orderId, OrderStatus selectedOrderStatus) {
-		// TODO Auto-generated method stub
-		
-	}
 }
