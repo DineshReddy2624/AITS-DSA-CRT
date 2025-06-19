@@ -3,14 +3,7 @@ package application;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-
-/**
- * Utility class for establishing a connection to the MySQL database.
- * Contains database credentials and a static method to get a connection.
- */
 public class DBConnection {
-    // Database credentials for MySQL
-    // Ensure your MySQL server is running and database 'project' exists.
     private static final String URL = "jdbc:mysql://localhost:3306/project?useSSL=false&allowPublicKeyRetrieval=true";
     private static final String USER = "root";
     private static final String PASSWORD = "DineshK@2624"; // REPLACE WITH YOUR ACTUAL MYSQL PASSWORD
