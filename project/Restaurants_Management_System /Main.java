@@ -12,10 +12,15 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.FileChooser; // New import for FileChooser
 
+import java.io.File; // New import for File
+import java.io.FileWriter; // New import for FileWriter
+import java.io.IOException; // New import for IOException
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.*;
+import java.time.LocalDate; // New import for LocalDate
 import java.util.stream.Collectors; // For Java 8 stream API usage
 
 /**
@@ -164,7 +169,7 @@ public class Main extends Application {
         root.setStyle("-fx-background-color: #f4f4f4;"); // Light background
 
         Label welcomeLabel = new Label("Welcome to Shield Restaurant");
-        welcomeLabel.setStyle("-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #333;");
+        welcomeLabel.getStyleClass().add("title-label"); // Apply CSS class
 
         Button adminBtn = createStyledButton("Admin Access");
         Button customerBtn = createStyledButton("Customer Access");
@@ -177,6 +182,8 @@ public class Main extends Application {
         root.getChildren().addAll(welcomeLabel, adminBtn, customerBtn, exitBtn);
 
         Scene scene = new Scene(root, 400, 350); // Adjusted size
+        // Add the CSS stylesheet to the scene
+        scene.getStylesheets().add(getClass().getResource("Style.css").toExternalForm());
         primaryStage.setScene(scene);
         primaryStage.setTitle("Shield Restaurant - Access Selection");
         primaryStage.show();
@@ -189,9 +196,7 @@ public class Main extends Application {
         Button button = new Button(text);
         button.setPrefWidth(200);
         button.setPrefHeight(40);
-        button.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 16px; -fx-border-radius: 5px; -fx-background-radius: 5px;");
-        button.setOnMouseEntered(e -> button.setStyle("-fx-background-color: #45a049; -fx-text-fill: white; -fx-font-size: 16px; -fx-border-radius: 5px; -fx-background-radius: 5px;"));
-        button.setOnMouseExited(e -> button.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 16px; -fx-border-radius: 5px; -fx-background-radius: 5px;"));
+        button.getStyleClass().add("button"); // Apply CSS class
         return button;
     }
 
@@ -202,9 +207,7 @@ public class Main extends Application {
         Button button = new Button(text);
         button.setPrefWidth(120);
         button.setPrefHeight(30);
-        button.setStyle("-fx-background-color: #008CBA; -fx-text-fill: white; -fx-font-size: 14px; -fx-border-radius: 5px; -fx-background-radius: 5px;");
-        button.setOnMouseEntered(e -> button.setStyle("-fx-background-color: #007bb5; -fx-text-fill: white; -fx-font-size: 14px; -fx-border-radius: 5px; -fx-background-radius: 5px;"));
-        button.setOnMouseExited(e -> button.setStyle("-fx-background-color: #008CBA; -fx-text-fill: white; -fx-font-size: 14px; -fx-border-radius: 5px; -fx-background-radius: 5px;"));
+        button.getStyleClass().addAll("button", "secondary-button"); // Apply CSS classes
         return button;
     }
 
@@ -215,9 +218,7 @@ public class Main extends Application {
         Button button = new Button(text);
         button.setPrefWidth(80);
         button.setPrefHeight(25);
-        button.setStyle("-fx-background-color: #5cb85c; -fx-text-fill: white; -fx-font-size: 13px; -fx-border-radius: 3px; -fx-background-radius: 3px;");
-        button.setOnMouseEntered(e -> button.setStyle("-fx-background-color: #4cae4c; -fx-text-fill: white; -fx-font-size: 13px; -fx-border-radius: 3px; -fx-background-radius: 3px;"));
-        button.setOnMouseExited(e -> button.setStyle("-fx-background-color: #5cb85c; -fx-text-fill: white; -fx-font-size: 13px; -fx-border-radius: 3px; -fx-background-radius: 3px;"));
+        button.getStyleClass().addAll("button", "small-dialog-button"); // Apply CSS classes
         return button;
     }
 
@@ -229,6 +230,10 @@ public class Main extends Application {
         alert.setTitle(title);
         alert.setHeaderText(header);
         alert.setContentText(content);
+        // Apply CSS to the alert dialog (optional, might require custom dialog styling)
+        // DialogPane dialogPane = alert.getDialogPane();
+        // dialogPane.getStylesheets().add(getClass().getResource("Style.css").toExternalForm());
+        // dialogPane.getStyleClass().add("myDialog");
         alert.showAndWait();
     }
 
@@ -240,18 +245,18 @@ public class Main extends Application {
         root.setStyle("-fx-background-color: #e0f2f7;"); // Light blue background
 
         Label prompt = new Label("Enter 4-digit admin PIN:");
-        prompt.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #01579B;");
+        prompt.getStyleClass().add("prompt-label"); // Apply CSS class
 
         PasswordField pinField = new PasswordField();
         pinField.setMaxWidth(200);
         pinField.setPromptText("PIN");
-        pinField.setStyle("-fx-border-color: #01579B; -fx-border-radius: 5px;");
+        pinField.getStyleClass().add("password-field"); // Apply CSS class
 
         Button loginBtn = createStyledButton("Login");
         Button backBtn = createSecondaryStyledButton("Back");
 
         Label msgLabel = new Label();
-        msgLabel.setStyle("-fx-text-fill: red; -fx-font-weight: bold;");
+        msgLabel.getStyleClass().add("message-label"); // Base message label class
 
         loginBtn.setOnAction(e -> {
             String pin = pinField.getText();
@@ -259,6 +264,7 @@ public class Main extends Application {
                 showAdminMenu();
             } else {
                 msgLabel.setText("Invalid PIN. Access denied.");
+                msgLabel.getStyleClass().setAll("message-label", "error"); // Apply error class
                 pinField.clear();
             }
         });
@@ -268,6 +274,7 @@ public class Main extends Application {
         root.getChildren().addAll(prompt, pinField, loginBtn, backBtn, msgLabel);
 
         Scene scene = new Scene(root, 400, 350);
+        scene.getStylesheets().add(getClass().getResource("Style.css").toExternalForm()); // Apply CSS
         primaryStage.setScene(scene);
         primaryStage.setTitle("Admin Login");
     }
@@ -279,14 +286,14 @@ public class Main extends Application {
         root.setStyle("-fx-background-color: #e8eaf6;"); // Lighter blue/purple background
 
         Label titleLabel = new Label("Admin Portal");
-        titleLabel.setStyle("-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #1A237E;");
+        titleLabel.getStyleClass().add("title-label"); // Apply CSS class
         BorderPane.setAlignment(titleLabel, Pos.CENTER);
         root.setTop(titleLabel);
 
         VBox menuButtons = new VBox(10);
         menuButtons.setPadding(new Insets(10));
         menuButtons.setAlignment(Pos.TOP_LEFT);
-        menuButtons.setStyle("-fx-background-color: #c5cae9; -fx-border-radius: 8px; -fx-background-radius: 8px;");
+        menuButtons.setStyle("-fx-background-color: #c5cae9; -fx-border-radius: 8px; -fx-background-radius: 8px;"); // Keep inline style for menu area background as it's specific
 
         Button viewMenuBtn = createStyledButton("View Menu Items");
         Button editItemBtn = createStyledButton("Add Menu Item"); // New functionality
@@ -295,13 +302,14 @@ public class Main extends Application {
         Button updateBookingStatusBtn = createStyledButton("Update Table Booking Payment Status"); // New functionality
         Button viewOrdersBtn = createStyledButton("View All Orders");
         Button manageOrderStatusBtn = createStyledButton("Manage Order Status"); // Renamed and refactored
+        Button addOfflineBookingBtn = createStyledButton("Add Offline Booking"); // New: Add offline booking
         Button searchMenuBtn = createStyledButton("Search Menu Items by Name");
         Button dailyReportBtn = createStyledButton("Generate Daily Sales Report");
         Button logoutBtn = createSecondaryStyledButton("Logout");
 
         menuButtons.getChildren().addAll(viewMenuBtn, editItemBtn, removeItemBtn,
                                          viewBookingsBtn, updateBookingStatusBtn, viewOrdersBtn,
-                                         manageOrderStatusBtn, searchMenuBtn, dailyReportBtn, // Changed button
+                                         manageOrderStatusBtn, addOfflineBookingBtn, searchMenuBtn, dailyReportBtn, // Changed button
                                          new Separator(), logoutBtn); // Separator for visual grouping
 
         root.setLeft(menuButtons);
@@ -310,27 +318,33 @@ public class Main extends Application {
         TabPane displayTabs = new TabPane();
         displayTabs.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
         displayTabs.setPadding(new Insets(10));
+        displayTabs.getStyleClass().add("tab-pane"); // Apply CSS class
 
         // Tab for Menu Items
         Tab menuTab = new Tab("Menu Items");
+        menuTab.getStyleClass().add("tab"); // Apply CSS class
         menuTab.setContent(createMenuItemTableView()); // Use TableView for menu items
         displayTabs.getTabs().add(menuTab);
 
         // Tab for Orders
         Tab ordersTab = new Tab("Orders");
+        ordersTab.getStyleClass().add("tab"); // Apply CSS class
         ordersTab.setContent(createOrderTableView()); // Use TableView for orders
         displayTabs.getTabs().add(ordersTab);
 
         // Tab for Bookings
         Tab bookingsTab = new Tab("Table Bookings");
+        bookingsTab.getStyleClass().add("tab"); // Apply CSS class
         bookingsTab.setContent(createTableBookingTableView()); // Use TableView for bookings
         displayTabs.getTabs().add(bookingsTab);
 
         // Tab for Reports/Search (initially empty, filled on action)
         Tab reportTab = new Tab("Reports / Search Results");
+        reportTab.getStyleClass().add("tab"); // Apply CSS class
         TextArea reportArea = new TextArea();
         reportArea.setEditable(false);
         reportArea.setPromptText("Reports and search results will appear here...");
+        reportArea.getStyleClass().add("text-area"); // Apply CSS class
         reportTab.setContent(reportArea);
         displayTabs.getTabs().add(reportTab);
 
@@ -344,11 +358,13 @@ public class Main extends Application {
         updateBookingStatusBtn.setOnAction(e -> showUpdateTableBookingPaymentStatus());
         viewOrdersBtn.setOnAction(e -> displayTabs.getSelectionModel().select(ordersTab));
         manageOrderStatusBtn.setOnAction(e -> showManageOrderStatusDialog()); // New action for the refactored button
+        addOfflineBookingBtn.setOnAction(e -> showAddOfflineBookingDialog()); // New: Add offline booking dialog
         searchMenuBtn.setOnAction(e -> showSearchMenuItem(reportArea)); // Direct output to reportArea
         dailyReportBtn.setOnAction(e -> generateDailySalesReport(reportArea)); // Direct output to reportArea
         logoutBtn.setOnAction(e -> showAccessSelection());
 
         Scene scene = new Scene(root, 1000, 700); // Increased overall size for better layout
+        scene.getStylesheets().add(getClass().getResource("Style.css").toExternalForm()); // Apply CSS
         primaryStage.setScene(scene);
         primaryStage.setTitle("Admin Dashboard");
     }
@@ -359,6 +375,7 @@ public class Main extends Application {
     private TableView<MenuItem> createMenuItemTableView() {
         TableView<MenuItem> tableView = new TableView<>();
         tableView.setEditable(false); // Make it non-editable by default
+        tableView.getStyleClass().add("table-view"); // Apply CSS class
 
         TableColumn<MenuItem, Integer> idCol = new TableColumn<>("ID");
         idCol.setCellValueFactory(new PropertyValueFactory<>("id"));
@@ -396,6 +413,7 @@ public class Main extends Application {
     private TableView<Order> createOrderTableView() {
         TableView<Order> tableView = new TableView<>();
         tableView.setEditable(false);
+        tableView.getStyleClass().add("table-view"); // Apply CSS class
 
         TableColumn<Order, Integer> orderIdCol = new TableColumn<>("Order ID");
         orderIdCol.setCellValueFactory(new PropertyValueFactory<>("orderId")); // Uses getOrderId()
@@ -410,6 +428,11 @@ public class Main extends Application {
         // Uses getPaymentStatus().getDisplayValue()
         paymentStatusCol.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getPaymentStatus().getDisplayValue()));
         paymentStatusCol.setPrefWidth(120);
+
+        // New Column for Payment Method
+        TableColumn<Order, String> paymentMethodCol = new TableColumn<>("Payment Method");
+        paymentMethodCol.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getPaymentMethod().getDisplayValue()));
+        paymentMethodCol.setPrefWidth(120);
 
         TableColumn<Order, Double> totalAmountCol = new TableColumn<>("Total (Rs.)");
         totalAmountCol.setCellValueFactory(new PropertyValueFactory<>("price")); // Uses getPrice()
@@ -444,7 +467,7 @@ public class Main extends Application {
         });
         netAmountCol.setPrefWidth(100);
 
-        tableView.getColumns().addAll(orderIdCol, statusCol, paymentStatusCol, totalAmountCol, discountCol, netAmountCol);
+        tableView.getColumns().addAll(orderIdCol, statusCol, paymentStatusCol, paymentMethodCol, totalAmountCol, discountCol, netAmountCol);
         tableView.setItems(allOrders);
         return tableView;
     }
@@ -467,6 +490,7 @@ public class Main extends Application {
     private TableView<TableBooking> createTableBookingTableView() {
         TableView<TableBooking> tableView = new TableView<>();
         tableView.setEditable(false);
+        tableView.getStyleClass().add("table-view"); // Apply CSS class
 
         TableColumn<TableBooking, String> customerIdCol = new TableColumn<>("Cust ID");
         // FIX: Changed to use "customerId" which implies getCustomerId()
@@ -546,25 +570,29 @@ public class Main extends Application {
         root.setStyle("-fx-background-color: #f0f4c3; -fx-border-radius: 8px; -fx-background-radius: 8px;");
 
         Label title = new Label(itemToEdit == null ? "Enter new menu item details:" : "Edit menu item details:");
-        title.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
+        title.getStyleClass().add("title-label"); // Apply CSS class
         root.add(title, 0, 0, 2, 1);
 
         Label nameLabel = new Label("Item Name:");
+        nameLabel.getStyleClass().add("label"); // Apply CSS class
         TextField nameField = new TextField();
         nameField.setPromptText("e.g., Chicken Biryani");
+        nameField.getStyleClass().add("text-field"); // Apply CSS class
         nameField.setText(itemToEdit != null ? itemToEdit.getName() : "");
         root.add(nameLabel, 0, 1);
         root.add(nameField, 1, 1);
 
         Label priceLabel = new Label("Item Price:");
+        priceLabel.getStyleClass().add("label"); // Apply CSS class
         TextField priceField = new TextField();
         priceField.setPromptText("e.g., 250.00");
+        priceField.getStyleClass().add("text-field"); // Apply CSS class
         priceField.setText(itemToEdit != null ? String.valueOf(itemToEdit.getPrice()) : "");
         root.add(priceLabel, 0, 2);
         root.add(priceField, 1, 2);
 
         Label msgLabel = new Label();
-        msgLabel.setStyle("-fx-text-fill: red; -fx-font-weight: bold;");
+        msgLabel.getStyleClass().add("message-label"); // Base message label class
         root.add(msgLabel, 0, 4, 2, 1);
 
         Button saveBtn = createSmallDialogButton(itemToEdit == null ? "Add" : "Save");
@@ -580,12 +608,14 @@ public class Main extends Application {
 
             if (name.isEmpty() || priceText.isEmpty()) {
                 msgLabel.setText("Fill all fields.");
+                msgLabel.getStyleClass().setAll("message-label", "error"); // Apply error class
                 return;
             }
             try {
                 double price = Double.parseDouble(priceText);
                 if (price <= 0) {
                     msgLabel.setText("Price must be positive.");
+                    msgLabel.getStyleClass().setAll("message-label", "error"); // Apply error class
                     return;
                 }
 
@@ -607,12 +637,14 @@ public class Main extends Application {
                 stage.close();
             } catch (NumberFormatException ex) {
                 msgLabel.setText("Invalid price. Please enter a number.");
+                msgLabel.getStyleClass().setAll("message-label", "error"); // Apply error class
             }
         });
 
         cancelBtn.setOnAction(e -> stage.close());
 
         Scene scene = new Scene(root, 400, 250);
+        scene.getStylesheets().add(getClass().getResource("Style.css").toExternalForm()); // Apply CSS
         stage.setScene(scene);
         stage.showAndWait(); // Wait for this dialog to close
     }
@@ -624,6 +656,9 @@ public class Main extends Application {
         dialog.setTitle("Remove Menu Item");
         dialog.setHeaderText("Enter the ID of the menu item to remove:");
         dialog.setContentText("Item ID:");
+        // Apply CSS to the dialog (might need custom DialogPane styling if needed)
+        dialog.getDialogPane().getStylesheets().add(getClass().getResource("Style.css").toExternalForm());
+        dialog.getDialogPane().getStyleClass().add("root"); // Apply root style to dialog pane
 
         Optional<String> result = dialog.showAndWait();
         result.ifPresent(idText -> {
@@ -667,43 +702,60 @@ public class Main extends Application {
         root.setStyle("-fx-background-color: #fce4ec;"); // Light pink background
 
         Label title = new Label("Enter Order ID to manage:");
-        title.setStyle("-fx-font-weight: bold; -fx-font-size: 16px;");
+        title.getStyleClass().add("prompt-label"); // Apply CSS class
 
         TextField orderIdField = new TextField();
         orderIdField.setPromptText("Enter Order ID");
         orderIdField.setPrefWidth(150);
+        orderIdField.getStyleClass().add("text-field"); // Apply CSS class
 
         Button searchBtn = createSmallDialogButton("Search");
 
         Label currentStatusLabel = new Label("Current Order Status: -");
         Label currentPaymentStatusLabel = new Label("Current Payment Status: -");
-        currentStatusLabel.setStyle("-fx-font-weight: bold;");
-        currentPaymentStatusLabel.setStyle("-fx-font-weight: bold;");
+        Label currentPaymentMethodLabel = new Label("Current Payment Method: -");
+        currentStatusLabel.getStyleClass().add("label"); // Apply CSS class
+        currentPaymentStatusLabel.getStyleClass().add("label"); // Apply CSS class
+        currentPaymentMethodLabel.getStyleClass().add("label"); // Apply CSS class
+
 
         ComboBox<OrderStatus> orderStatusComboBox = new ComboBox<>();
         orderStatusComboBox.setItems(FXCollections.observableArrayList(OrderStatus.values()));
         orderStatusComboBox.setPromptText("Select New Order Status");
         orderStatusComboBox.setPrefWidth(200);
+        orderStatusComboBox.getStyleClass().add("combo-box"); // Apply CSS class
 
         ComboBox<PaymentStatus> paymentStatusComboBox = new ComboBox<>();
         paymentStatusComboBox.setItems(FXCollections.observableArrayList(PaymentStatus.values()));
         paymentStatusComboBox.setPromptText("Select New Payment Status");
         paymentStatusComboBox.setPrefWidth(200);
+        paymentStatusComboBox.getStyleClass().add("combo-box"); // Apply CSS class
+
+        ComboBox<PaymentMethod> paymentMethodComboBox = new ComboBox<>();
+        paymentMethodComboBox.setItems(FXCollections.observableArrayList(PaymentMethod.values()));
+        paymentMethodComboBox.setPromptText("Select New Payment Method");
+        paymentMethodComboBox.setPrefWidth(200);
+        paymentMethodComboBox.getStyleClass().add("combo-box"); // Apply CSS class
+
 
         Label msgLabel = new Label();
         msgLabel.setWrapText(true);
-        msgLabel.setStyle("-fx-font-weight: bold;");
+        msgLabel.getStyleClass().add("message-label"); // Base message label class
 
         Button updateBtn = createSmallDialogButton("Update");
+        Button generateBillBtn = createSmallDialogButton("Generate Bill");
         Button cancelBtn = createSmallDialogButton("Close");
 
-        HBox buttonBar = new HBox(10, updateBtn, cancelBtn);
+        HBox buttonBar = new HBox(10, updateBtn, generateBillBtn, cancelBtn);
         buttonBar.setAlignment(Pos.CENTER);
 
         // Initially disable status controls
         orderStatusComboBox.setDisable(true);
         paymentStatusComboBox.setDisable(true);
+        paymentMethodComboBox.setDisable(true);
         updateBtn.setDisable(true);
+        generateBillBtn.setDisable(true);
+
 
         final Order[] foundOrder = {null}; // Array to hold the found order, allowing modification in lambda
 
@@ -718,30 +770,41 @@ public class Main extends Application {
                 if (foundOrder[0] != null) {
                     currentStatusLabel.setText("Current Order Status: " + foundOrder[0].getStatus().getDisplayValue());
                     currentPaymentStatusLabel.setText("Current Payment Status: " + foundOrder[0].getPaymentStatus().getDisplayValue());
+                    currentPaymentMethodLabel.setText("Current Payment Method: " + foundOrder[0].getPaymentMethod().getDisplayValue());
                     orderStatusComboBox.setValue(foundOrder[0].getStatus());
                     paymentStatusComboBox.setValue(foundOrder[0].getPaymentStatus());
+                    paymentMethodComboBox.setValue(foundOrder[0].getPaymentMethod());
 
                     orderStatusComboBox.setDisable(false);
                     paymentStatusComboBox.setDisable(false);
+                    paymentMethodComboBox.setDisable(false);
                     updateBtn.setDisable(false);
+                    generateBillBtn.setDisable(false);
                     msgLabel.setText("");
+                    msgLabel.getStyleClass().setAll("message-label", "success"); // Apply success class
                 } else {
                     currentStatusLabel.setText("Current Order Status: -");
                     currentPaymentStatusLabel.setText("Current Payment Status: -");
+                    currentPaymentMethodLabel.setText("Current Payment Method: -");
                     orderStatusComboBox.setDisable(true);
                     paymentStatusComboBox.setDisable(true);
+                    paymentMethodComboBox.setDisable(true);
                     updateBtn.setDisable(true);
-                    msgLabel.setStyle("-fx-text-fill: red;");
+                    generateBillBtn.setDisable(true);
+                    msgLabel.getStyleClass().setAll("message-label", "error"); // Apply error class
                     msgLabel.setText("Order ID " + id + " not found.");
                 }
             } catch (NumberFormatException ex) {
-                msgLabel.setStyle("-fx-text-fill: red;");
+                msgLabel.getStyleClass().setAll("message-label", "error"); // Apply error class
                 msgLabel.setText("Invalid Order ID. Please enter a number.");
                 currentStatusLabel.setText("Current Order Status: -");
                 currentPaymentStatusLabel.setText("Current Payment Status: -");
+                currentPaymentMethodLabel.setText("Current Payment Method: -");
                 orderStatusComboBox.setDisable(true);
                 paymentStatusComboBox.setDisable(true);
+                paymentMethodComboBox.setDisable(true);
                 updateBtn.setDisable(true);
+                generateBillBtn.setDisable(true);
             }
         });
 
@@ -749,31 +812,51 @@ public class Main extends Application {
             if (foundOrder[0] != null) {
                 OrderStatus selectedOrderStatus = orderStatusComboBox.getValue();
                 PaymentStatus selectedPaymentStatus = paymentStatusComboBox.getValue();
+                PaymentMethod selectedPaymentMethod = paymentMethodComboBox.getValue();
 
-                if (selectedOrderStatus != null && selectedPaymentStatus != null) {
-                    // Update in memory
+                if (selectedOrderStatus != null && selectedPaymentStatus != null && selectedPaymentMethod != null) {
                     foundOrder[0].status = selectedOrderStatus;
                     foundOrder[0].paymentStatus = selectedPaymentStatus;
+                    foundOrder[0].paymentMethod = selectedPaymentMethod;
 
-                    // Update in database
                     DatabaseManager.updateOrderStatus(foundOrder[0].getOrderId(), selectedOrderStatus);
                     DatabaseManager.updateOrderPaymentStatus(foundOrder[0].getOrderId(), selectedPaymentStatus);
+                    DatabaseManager.updateOrderPaymentMethod(foundOrder[0].getOrderId(), selectedPaymentMethod);
 
                     showAlert(Alert.AlertType.INFORMATION, "Update Successful", "Order Status Updated",
                             "Order ID " + foundOrder[0].getOrderId() + " status updated to " + selectedOrderStatus.getDisplayValue() +
-                            " and payment status to " + selectedPaymentStatus.getDisplayValue() + ".");
+                            ", payment status to " + selectedPaymentStatus.getDisplayValue() +
+                            ", and payment method to " + selectedPaymentMethod.getDisplayValue() + ".");
 
-                    // Refresh the TableView
                     getOrderTableView().refresh();
                     stage.close();
                 } else {
-                    msgLabel.setStyle("-fx-text-fill: red;");
-                    msgLabel.setText("Please select both Order Status and Payment Status.");
+                    msgLabel.getStyleClass().setAll("message-label", "error"); // Apply error class
+                    msgLabel.setText("Please select Order Status, Payment Status, and Payment Method.");
                 }
             }
         });
 
+        generateBillBtn.setOnAction(e -> {
+            if (foundOrder[0] != null && foundOrder[0].getPaymentStatus() == PaymentStatus.PAID) {
+                showBillDialog(foundOrder[0]);
+            } else if (foundOrder[0] != null) {
+                showAlert(Alert.AlertType.WARNING, "Bill Not Available", "Payment Pending", "Bill can only be generated for PAID orders.");
+            } else {
+                showAlert(Alert.AlertType.ERROR, "No Order Selected", "Error", "Please search for an order first.");
+            }
+        });
+
+
         cancelBtn.setOnAction(e -> stage.close());
+
+        // Create Labels separately, then add style class, then add to root
+        Label newOrderStatusLabel = new Label("New Order Status:");
+        newOrderStatusLabel.getStyleClass().add("label");
+        Label newPaymentStatusLabel = new Label("New Payment Status:");
+        newPaymentStatusLabel.getStyleClass().add("label");
+        Label newPaymentMethodLabel = new Label("New Payment Method:");
+        newPaymentMethodLabel.getStyleClass().add("label");
 
         root.getChildren().addAll(
             title,
@@ -781,15 +864,19 @@ public class Main extends Application {
             new Separator(),
             currentStatusLabel,
             currentPaymentStatusLabel,
-            new Label("New Order Status:"),
+            currentPaymentMethodLabel,
+            newOrderStatusLabel, // Corrected line
             orderStatusComboBox,
-            new Label("New Payment Status:"),
+            newPaymentStatusLabel, // Corrected line
             paymentStatusComboBox,
+            newPaymentMethodLabel, // Corrected line
+            paymentMethodComboBox,
             msgLabel,
             buttonBar
         );
 
-        Scene scene = new Scene(root, 400, 450);
+        Scene scene = new Scene(root, 400, 500);
+        scene.getStylesheets().add(getClass().getResource("Style.css").toExternalForm()); // Apply CSS
         stage.setScene(scene);
         stage.showAndWait();
     }
@@ -800,7 +887,9 @@ public class Main extends Application {
         TextInputDialog idDialog = new TextInputDialog();
         idDialog.setTitle("Update Table Booking Payment Status");
         idDialog.setHeaderText("Enter the Customer ID for the booking:");
-        idDialog.setContentText("Customer ID:");
+        idDialog.setContentText("Item ID:");
+        idDialog.getDialogPane().getStylesheets().add(getClass().getResource("Style.css").toExternalForm()); // Apply CSS
+        idDialog.getDialogPane().getStyleClass().add("root"); // Apply root style to dialog pane
 
         Optional<String> customerIdResult = idDialog.showAndWait();
         customerIdResult.ifPresent(custIdText -> {
@@ -815,6 +904,8 @@ public class Main extends Application {
                 statusDialog.setTitle("Update Table Booking Payment Status");
                 statusDialog.setHeaderText("Customer ID: " + customerId + "\nCurrent Payment Status: " + foundBooking.getPaymentStatus().getDisplayValue()); // Use getter
                 statusDialog.setContentText("Select new status:");
+                statusDialog.getDialogPane().getStylesheets().add(getClass().getResource("Style.css").toExternalForm()); // Apply CSS
+                statusDialog.getDialogPane().getStyleClass().add("root"); // Apply root style to dialog pane
 
                 Optional<PaymentStatus> newStatus = statusDialog.showAndWait();
                 newStatus.ifPresent(statusToSet -> {
@@ -839,14 +930,17 @@ public class Main extends Application {
         VBox root = new VBox(10);
         root.setPadding(new Insets(10));
         root.setAlignment(Pos.CENTER);
+        root.getStyleClass().add("root"); // Apply root style
 
         TextField keywordField = new TextField();
         keywordField.setPromptText("Enter keyword");
+        keywordField.getStyleClass().add("text-field"); // Apply CSS class
 
         TextArea resultsArea = new TextArea();
         resultsArea.setEditable(false);
         resultsArea.setPrefHeight(200);
         resultsArea.setPromptText("Search results will appear here...");
+        resultsArea.getStyleClass().add("text-area"); // Apply CSS class
 
         Button searchBtn = createSmallDialogButton("Search");
         Button cancelBtn = createSmallDialogButton("Done");
@@ -874,9 +968,13 @@ public class Main extends Application {
 
         cancelBtn.setOnAction(e -> stage.close());
 
-        root.getChildren().addAll(new Label("Search menu items by name:"), keywordField, searchBtn, cancelBtn, resultsArea);
+        // Fix the error by separating Label creation and style class application
+        Label searchLabel = new Label("Search menu items by name:");
+        searchLabel.getStyleClass().add("label");
+        root.getChildren().addAll(searchLabel, keywordField, searchBtn, cancelBtn, resultsArea);
 
         Scene scene = new Scene(root, 350, 350);
+        scene.getStylesheets().add(getClass().getResource("Style.css").toExternalForm()); // Apply CSS
         stage.setScene(scene);
         stage.showAndWait();
     }
@@ -899,7 +997,8 @@ public class Main extends Application {
         for (Order order : paidOrders) {
             totalSales += order.getFinalPrice(); // Uses getter
             paidOrdersCount++;
-            reportBuilder.append(String.format("Order ID: %d, Net Amount: Rs.%.2f\n", order.getOrderId(), order.getFinalPrice())); // Use getters
+            reportBuilder.append(String.format("Order ID: %d, Net Amount: Rs.%.2f, Payment Method: %s\n", // Added payment method
+                                                order.getOrderId(), order.getFinalPrice(), order.getPaymentMethod().getDisplayValue())); // Use getters
         }
 
         reportBuilder.append("\nSummary:\n");
@@ -918,14 +1017,14 @@ public class Main extends Application {
         root.setStyle("-fx-background-color: #e3f2fd;"); // Light blue background
 
         Label titleLabel = new Label("Customer Menu");
-        titleLabel.setStyle("-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #0D47A1;");
+        titleLabel.getStyleClass().add("title-label"); // Apply CSS class
         BorderPane.setAlignment(titleLabel, Pos.CENTER);
         root.setTop(titleLabel);
 
         VBox menuButtons = new VBox(10);
         menuButtons.setPadding(new Insets(10));
         menuButtons.setAlignment(Pos.TOP_LEFT);
-        menuButtons.setStyle("-fx-background-color: #bbdefb; -fx-border-radius: 8px; -fx-background-radius: 8px;");
+        menuButtons.setStyle("-fx-background-color: #bbdefb; -fx-border-radius: 8px; -fx-background-radius: 8px;"); // Keep inline for specific section
 
         Button viewMenuBtn = createStyledButton("View Menu Items");
         Button placeOrderBtn = createStyledButton("Place New Order");
@@ -945,22 +1044,31 @@ public class Main extends Application {
         TabPane customerDisplayTabs = new TabPane();
         customerDisplayTabs.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
         customerDisplayTabs.setPadding(new Insets(10));
+        customerDisplayTabs.getStyleClass().add("tab-pane"); // Apply CSS class
 
         Tab menuTab = new Tab("Menu");
+        menuTab.getStyleClass().add("tab"); // Apply CSS class
         menuTab.setContent(createMenuItemTableView()); // Re-use menu item table view
         customerDisplayTabs.getTabs().add(menuTab);
 
         Tab cartTab = new Tab("Your Cart");
+        cartTab.getStyleClass().add("tab"); // Apply CSS class
         ListView<String> currentCartDisplay = new ListView<>();
-        currentCartDisplay.setPlaceholder(new Label("Your cart is empty."));
+        // Fix: Create the Label first, then add the style class, then set as placeholder
+        Label placeholderLabel = new Label("Your cart is empty.");
+        placeholderLabel.getStyleClass().add("label");
+        currentCartDisplay.setPlaceholder(placeholderLabel);
         currentCartDisplay.setEditable(false);
+        currentCartDisplay.getStyleClass().add("list-view"); // Apply CSS class
         cartTab.setContent(currentCartDisplay);
         customerDisplayTabs.getTabs().add(cartTab);
 
         Tab outputTab = new Tab("Messages / Order Info");
+        outputTab.getStyleClass().add("tab"); // Apply CSS class
         TextArea customerOutputArea = new TextArea();
         customerOutputArea.setEditable(false);
         customerOutputArea.setPromptText("Messages and order details will appear here...");
+        customerOutputArea.getStyleClass().add("text-area"); // Apply CSS class
         outputTab.setContent(customerOutputArea);
         customerDisplayTabs.getTabs().add(outputTab);
 
@@ -979,6 +1087,7 @@ public class Main extends Application {
         backBtn.setOnAction(e -> showAccessSelection());
 
         Scene scene = new Scene(root, 1000, 700);
+        scene.getStylesheets().add(getClass().getResource("Style.css").toExternalForm()); // Apply CSS
         primaryStage.setScene(scene);
         primaryStage.setTitle("Customer Menu");
     }
@@ -1025,9 +1134,10 @@ public class Main extends Application {
         root.setPadding(new Insets(20));
         root.setAlignment(Pos.CENTER);
         root.setStyle("-fx-background-color: #ffe0b2;"); // Light orange background
+        root.getStyleClass().add("root"); // Apply root style
 
         Label title = new Label("Select menu items to add to your cart:");
-        title.setStyle("-fx-font-weight: bold; -fx-font-size: 16px;");
+        title.getStyleClass().add("prompt-label"); // Apply CSS class
 
         // Use a ComboBox to select items
         ComboBox<MenuItem> menuComboBox = new ComboBox<>();
@@ -1044,6 +1154,7 @@ public class Main extends Application {
             }
         });
         menuComboBox.setPrefWidth(250);
+        menuComboBox.getStyleClass().add("combo-box"); // Apply CSS class
 
         Button addBtn = createSmallDialogButton("Add to Cart");
         Button removeBtn = createSmallDialogButton("Remove Last Item"); // New: Remove last added item
@@ -1053,7 +1164,7 @@ public class Main extends Application {
         itemActions.setAlignment(Pos.CENTER);
 
         Label msgLabel = new Label();
-        msgLabel.setStyle("-fx-text-fill: green; -fx-font-weight: bold;");
+        msgLabel.getStyleClass().add("message-label"); // Base message label class
 
         // Initialize current order if null
         if (currentOrder == null) {
@@ -1065,13 +1176,13 @@ public class Main extends Application {
             MenuItem selectedItem = menuComboBox.getSelectionModel().getSelectedItem();
             if (selectedItem == null) {
                 msgLabel.setText("Please select an item.");
-                msgLabel.setStyle("-fx-text-fill: red;");
+                msgLabel.getStyleClass().setAll("message-label", "error"); // Apply error class
                 return;
             }
 
             currentOrder.addItem(selectedItem);
             msgLabel.setText(selectedItem.getName() + " added to cart.");
-            msgLabel.setStyle("-fx-text-fill: green;");
+            msgLabel.getStyleClass().setAll("message-label", "success"); // Apply success class
             updateCartDisplay(currentCartDisplay);
         });
 
@@ -1079,11 +1190,11 @@ public class Main extends Application {
             if (currentOrder != null && !currentOrder.items.isEmpty()) {
                 MenuItem removed = currentOrder.items.remove(currentOrder.items.size() - 1);
                 msgLabel.setText(removed.getName() + " removed from cart.");
-                msgLabel.setStyle("-fx-text-fill: orange;");
+                msgLabel.getStyleClass().setAll("message-label", "warning"); // Apply warning class
                 updateCartDisplay(currentCartDisplay);
             } else {
                 msgLabel.setText("Cart is already empty.");
-                msgLabel.setStyle("-fx-text-fill: red;");
+                msgLabel.getStyleClass().setAll("message-label", "error"); // Apply error class
             }
         });
 
@@ -1092,6 +1203,7 @@ public class Main extends Application {
         root.getChildren().addAll(title, menuComboBox, itemActions, new Separator(), msgLabel, doneBtn);
 
         Scene scene = new Scene(root, 400, 300);
+        scene.getStylesheets().add(getClass().getResource("Style.css").toExternalForm()); // Apply CSS
         stage.setScene(scene);
         stage.showAndWait(); // Use showAndWait to keep this window active
     }
@@ -1111,6 +1223,9 @@ public class Main extends Application {
         couponDialog.setTitle("Coupon Code");
         couponDialog.setHeaderText("Apply Coupon Code (optional):");
         couponDialog.setContentText("Coupon:");
+        couponDialog.getDialogPane().getStylesheets().add(getClass().getResource("Style.css").toExternalForm()); // Apply CSS
+        couponDialog.getDialogPane().getStyleClass().add("root"); // Apply root style to dialog pane
+
 
         Optional<String> couponInput = couponDialog.showAndWait();
         String coupon = couponInput.orElse("").trim();
@@ -1129,6 +1244,21 @@ public class Main extends Application {
         currentOrder.discountApplied = discount; // Update the discount
         double finalPrice = currentOrder.getFinalPrice(); // Recalculate final price
 
+        // --- Payment Method Selection ---
+        ChoiceDialog<PaymentMethod> paymentMethodDialog = new ChoiceDialog<>(PaymentMethod.CASH, PaymentMethod.values());
+        paymentMethodDialog.setTitle("Select Payment Method");
+        paymentMethodDialog.setHeaderText("How would you like to pay?");
+        paymentMethodDialog.setContentText("Choose your payment method:");
+        paymentMethodDialog.getDialogPane().getStylesheets().add(getClass().getResource("Style.css").toExternalForm()); // Apply CSS
+        paymentMethodDialog.getDialogPane().getStyleClass().add("root"); // Apply root style to dialog pane
+
+        Optional<PaymentMethod> selectedPaymentMethod = paymentMethodDialog.showAndWait();
+        if (selectedPaymentMethod.isEmpty()) {
+            customerOutput.setText("Payment method selection cancelled. Order not confirmed.");
+            return; // User cancelled payment method selection
+        }
+        currentOrder.paymentMethod = selectedPaymentMethod.get(); // Set the chosen payment method
+
         // --- Order Summary Confirmation ---
         Alert summaryAlert = new Alert(Alert.AlertType.CONFIRMATION); // Changed to CONFIRMATION
         summaryAlert.setTitle("Order Summary");
@@ -1137,9 +1267,13 @@ public class Main extends Application {
         summaryContent.append("Items Total: Rs.").append(String.format("%.2f", currentOrder.getPrice())).append("\n");
         summaryContent.append("Discount: Rs.").append(String.format("%.2f", currentOrder.getDiscountApplied())).append("\n"); // Use getter
         summaryContent.append(couponMessage).append("\n");
-        summaryContent.append("Final Amount Due: Rs.").append(String.format("%.2f", finalPrice)).append("\n\n");
+        summaryContent.append("Final Amount Due: Rs.").append(String.format("%.2f", finalPrice)).append("\n");
+        summaryContent.append("Payment Method: ").append(currentOrder.getPaymentMethod().getDisplayValue()).append("\n\n"); // New: Display payment method
         summaryContent.append("Click OK to proceed to payment, or Cancel to go back.");
         summaryAlert.setContentText(summaryContent.toString());
+        summaryAlert.getDialogPane().getStylesheets().add(getClass().getResource("Style.css").toExternalForm()); // Apply CSS
+        summaryAlert.getDialogPane().getStyleClass().add("root"); // Apply root style to dialog pane
+
 
         Optional<ButtonType> summaryResult = summaryAlert.showAndWait();
         if (summaryResult.orElse(ButtonType.CANCEL) != ButtonType.OK) {
@@ -1147,17 +1281,36 @@ public class Main extends Application {
             return; // User cancelled summary
         }
 
-        // --- OTP Simulation ---
-        Random rand = new Random();
-        int otp = 1000 + rand.nextInt(9000); // 4-digit OTP
+        // --- OTP Simulation (only for Online payment) ---
+        boolean paymentSuccessful = false;
+        if (currentOrder.getPaymentMethod() == PaymentMethod.ONLINE) {
+            Random rand = new Random();
+            int otp = 1000 + rand.nextInt(9000); // 4-digit OTP
 
-        TextInputDialog otpDialog = new TextInputDialog();
-        otpDialog.setTitle("Payment Confirmation");
-        otpDialog.setHeaderText("Your OTP for payment is: " + otp + "\nEnter OTP to confirm payment for Rs." + String.format("%.2f", finalPrice));
-        otpDialog.setContentText("OTP:");
+            TextInputDialog otpDialog = new TextInputDialog();
+            otpDialog.setTitle("Payment Confirmation");
+            otpDialog.setHeaderText("Your OTP for payment is: " + otp + "\nEnter OTP to confirm payment for Rs." + String.format("%.2f", finalPrice));
+            otpDialog.setContentText("OTP:");
+            otpDialog.getDialogPane().getStylesheets().add(getClass().getResource("Style.css").toExternalForm()); // Apply CSS
+            otpDialog.getDialogPane().getStyleClass().add("root"); // Apply root style to dialog pane
 
-        Optional<String> result = otpDialog.showAndWait();
-        if (result.isPresent() && result.get().equals(String.valueOf(otp))) {
+
+            Optional<String> result = otpDialog.showAndWait();
+            if (result.isPresent() && result.get().equals(String.valueOf(otp))) {
+                paymentSuccessful = true;
+            } else {
+                customerOutput.setText("Payment failed or OTP incorrect. Order not confirmed.");
+                showAlert(Alert.AlertType.ERROR, "Payment Failed", null, "Payment failed or OTP incorrect.");
+                return; // Exit if OTP fails
+            }
+        } else { // Cash Payment
+            // For cash, payment is considered successful immediately
+            paymentSuccessful = true;
+            showAlert(Alert.AlertType.INFORMATION, "Payment Mode Selected", null, "Please pay Rs." + String.format("%.2f", finalPrice) + " at the counter.");
+        }
+
+
+        if (paymentSuccessful) {
             currentOrder.status = OrderStatus.CONFIRMED;
             currentOrder.paymentStatus = PaymentStatus.PAID;
             currentOrder.orderId = orderCounter++; // Assign and increment order ID
@@ -1166,15 +1319,152 @@ public class Main extends Application {
 
             customerOutput.setText("Order Confirmed! Your Order ID is: " + currentOrder.getOrderId() + // Use getter
                                    "\nTotal Amount Paid: Rs." + String.format("%.2f", finalPrice) +
+                                   "\nPayment Method: " + currentOrder.getPaymentMethod().getDisplayValue() + // New
                                    "\n" + couponMessage);
-            showAlert(Alert.AlertType.INFORMATION, "Payment Successful", null, "Payment successful! Order ID: " + currentOrder.getOrderId()); // Use getter
+            showAlert(Alert.AlertType.INFORMATION, "Order Confirmed", null, "Order successfully placed! Order ID: " + currentOrder.getOrderId()); // Use getter
+
+            // New: Show the bill after successful payment
+            showBillDialog(currentOrder);
+
             currentOrder = null; // Clear current order after confirmation
             updateCartDisplay(currentCartDisplay); // Clear cart display
         } else {
-            customerOutput.setText("Payment failed or OTP incorrect. Order not confirmed.");
-            showAlert(Alert.AlertType.ERROR, "Payment Failed", null, "Payment failed or OTP incorrect.");
+            customerOutput.setText("Payment failed. Order not confirmed.");
+            showAlert(Alert.AlertType.ERROR, "Payment Failed", null, "Payment failed.");
         }
     }
+
+    /**
+     * Displays a detailed bill for a given order.
+     * @param order The order for which to generate the bill.
+     */
+    private void showBillDialog(Order order) {
+        Stage stage = new Stage();
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.setTitle("Restaurant Bill - Order ID: " + order.getOrderId());
+
+        VBox root = new VBox(10);
+        root.setPadding(new Insets(20));
+        root.setAlignment(Pos.TOP_LEFT);
+        root.setStyle("-fx-background-color: #ffffff; -fx-border-color: #333; -fx-border-width: 2px; -fx-border-radius: 5px;");
+        root.getStyleClass().add("root"); // Apply root style to the bill dialog
+
+
+        Label header = new Label("--- Shield Restaurant Bill ---");
+        header.getStyleClass().add("title-label"); // Apply CSS class
+        header.setMaxWidth(Double.MAX_VALUE); // To center the text
+
+        Label dateLabel = new Label("Date: " + LocalDate.now());
+        dateLabel.getStyleClass().add("label"); // Apply CSS class
+        dateLabel.setMaxWidth(Double.MAX_VALUE);
+
+        Label orderIdLabel = new Label("Order ID: " + order.getOrderId());
+        orderIdLabel.getStyleClass().add("prompt-label"); // Apply CSS class
+        orderIdLabel.setStyle("-fx-padding: 5px 0;"); // Keep specific padding
+
+        Separator separator1 = new Separator();
+        separator1.getStyleClass().add("separator"); // Apply CSS class
+
+        Label itemsHeader = new Label("Items Ordered:");
+        itemsHeader.getStyleClass().add("label"); // Apply CSS class
+        itemsHeader.setStyle("-fx-padding: 5px 0;"); // Keep specific padding
+
+        // Use a TextArea or ListView for items to handle potentially long lists
+        TextArea itemsArea = new TextArea();
+        itemsArea.setEditable(false);
+        itemsArea.setPrefHeight(200); // Set a reasonable height
+        itemsArea.getStyleClass().add("text-area"); // Apply CSS class
+
+        StringBuilder itemDetails = new StringBuilder();
+        Map<String, Integer> itemCounts = new HashMap<>();
+        Map<String, Double> itemPrices = new HashMap<>();
+
+        for (MenuItem item : order.items) {
+            itemCounts.put(item.getName(), itemCounts.getOrDefault(item.getName(), 0) + 1);
+            if (!itemPrices.containsKey(item.getName())) { // Store price at time of order
+                itemPrices.put(item.getName(), item.getPrice());
+            }
+        }
+
+        itemDetails.append(String.format("%-25s %-5s %s\n", "Item", "Qty", "Price"));
+        itemDetails.append("--------------------------------------\n");
+        for (Map.Entry<String, Integer> entry : itemCounts.entrySet()) {
+            double lineTotal = entry.getValue() * itemPrices.get(entry.getKey());
+            itemDetails.append(String.format("%-25s x%-3d Rs.%.2f\n", entry.getKey(), entry.getValue(), lineTotal));
+        }
+        itemsArea.setText(itemDetails.toString());
+
+        Separator separator2 = new Separator();
+        separator2.getStyleClass().add("separator"); // Apply CSS class
+
+        Label subtotalLabel = new Label(String.format("Subtotal: Rs.%.2f", order.getPrice()));
+        subtotalLabel.getStyleClass().add("label"); // Apply CSS class
+        Label discountLabel = new Label(String.format("Discount: Rs.%.2f", order.getDiscountApplied()));
+        discountLabel.getStyleClass().add("label"); // Apply CSS class
+        Label finalTotalLabel = new Label(String.format("Final Amount Paid: Rs.%.2f", order.getFinalPrice()));
+        finalTotalLabel.getStyleClass().add("prompt-label"); // Apply CSS class (stronger style)
+        finalTotalLabel.setStyle("-fx-padding: 5px 0;"); // Keep specific padding
+        Label paymentMethodLabel = new Label("Payment Method: " + order.getPaymentMethod().getDisplayValue()); // New
+        paymentMethodLabel.getStyleClass().add("label"); // Apply CSS class
+
+
+        Button downloadBillBtn = createSmallDialogButton("Download Bill"); // New: Download button
+        Button closeBtn = createSmallDialogButton("Close");
+
+        HBox buttonBar = new HBox(10, downloadBillBtn, closeBtn); // Add download button
+        buttonBar.setAlignment(Pos.CENTER_RIGHT);
+
+        downloadBillBtn.setOnAction(e -> {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Save Bill");
+            fileChooser.setInitialFileName("Order_Bill_" + order.getOrderId() + ".txt");
+            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Text Files", "*.txt"));
+
+            // Set initial directory to user's home directory
+            File userHome = new File(System.getProperty("user.home"));
+            if (userHome.exists() && userHome.isDirectory()) {
+                fileChooser.setInitialDirectory(userHome);
+            }
+
+
+            File file = fileChooser.showSaveDialog(stage);
+            if (file != null) {
+                try (FileWriter fileWriter = new FileWriter(file)) {
+                    fileWriter.write("--- Shield Restaurant Bill ---\n\n");
+                    fileWriter.write("Date: " + LocalDate.now() + "\n");
+                    fileWriter.write("Order ID: " + order.getOrderId() + "\n\n");
+                    fileWriter.write("Items Ordered:\n");
+                    fileWriter.write("--------------------------------------\n");
+                    fileWriter.write(itemDetails.toString()); // Write formatted item details
+                    fileWriter.write("--------------------------------------\n");
+                    fileWriter.write(String.format("Subtotal: Rs.%.2f\n", order.getPrice()));
+                    fileWriter.write(String.format("Discount: Rs.%.2f\n", order.getDiscountApplied()));
+                    fileWriter.write(String.format("Final Amount Paid: Rs.%.2f\n", order.getFinalPrice()));
+                    fileWriter.write("Payment Method: " + order.getPaymentMethod().getDisplayValue() + "\n");
+                    fileWriter.write("--------------------------------------\n");
+                    fileWriter.write("\nThank you for your order!\n");
+
+                    showAlert(Alert.AlertType.INFORMATION, "Download Successful", "Bill Saved", "Bill for Order ID " + order.getOrderId() + " saved to:\n" + file.getAbsolutePath() + "\n\nNote: This is a plain text file. To get a PDF, open this file and use your system's 'Print to PDF' option.");
+                } catch (IOException ex) {
+                    showAlert(Alert.AlertType.ERROR, "Download Failed", "Error Saving Bill", "Failed to save bill: " + ex.getMessage());
+                }
+            }
+        });
+
+        // FIX: Ensure the close button works
+        closeBtn.setOnAction(e -> stage.close());
+
+
+        root.getChildren().addAll(header, dateLabel, orderIdLabel, separator1, itemsHeader, itemsArea,
+                                  separator2, subtotalLabel, discountLabel, finalTotalLabel, paymentMethodLabel,
+                                  new Separator(), buttonBar); // Use buttonBar
+
+        Scene scene = new Scene(new ScrollPane(root), 450, 600);
+        scene.getStylesheets().add(getClass().getResource("Style.css").toExternalForm()); // Apply CSS
+        stage.setScene(scene);
+        stage.showAndWait();
+    }
+
 
     // --- Customer: Reserve Table ---
     private void showReserveTable(TextArea customerOutput) {
@@ -1185,44 +1475,52 @@ public class Main extends Application {
         root.setPadding(new Insets(20));
         root.setAlignment(Pos.TOP_LEFT);
         root.setStyle("-fx-background-color: #e8f5e9;"); // Light green background
+        root.getStyleClass().add("root"); // Apply root style
 
         Label title = new Label("Table Reservation");
-        title.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2E7D32;");
+        title.getStyleClass().add("title-label"); // Apply CSS class
 
         // Availability Display Area
         TextArea availabilityArea = new TextArea();
         availabilityArea.setEditable(false);
         availabilityArea.setPrefHeight(200);
         availabilityArea.setPromptText("Click 'Check Available Tables' to see current availability.");
-        availabilityArea.setStyle("-fx-control-inner-background: #ffffff; -fx-font-family: 'Monospaced';");
+        availabilityArea.getStyleClass().add("text-area"); // Apply CSS class
+
 
         Button checkAvailabilityBtn = createSmallDialogButton("Check Available Tables");
 
         HBox tableTypeSelection = new HBox(10);
         tableTypeSelection.setAlignment(Pos.CENTER_LEFT);
         Label typeLabel = new Label("Table Type (Seats):");
+        typeLabel.getStyleClass().add("label"); // Apply CSS class
         ComboBox<TableType> typeComboBox = new ComboBox<>();
         typeComboBox.getItems().addAll(TableType.values()); // Populate with enum values
         typeComboBox.setPromptText("Select type");
         typeComboBox.setPrefWidth(150);
+        typeComboBox.getStyleClass().add("combo-box"); // Apply CSS class
         tableTypeSelection.getChildren().addAll(typeLabel, typeComboBox);
 
         HBox tableNumberSelection = new HBox(10);
         tableNumberSelection.setAlignment(Pos.CENTER_LEFT);
         Label numberLabel = new Label("Table Number (1-10):");
+        numberLabel.getStyleClass().add("label"); // Apply CSS class
         TextField numberField = new TextField();
         numberField.setPromptText("Enter number");
         numberField.setPrefWidth(80);
+        numberField.getStyleClass().add("text-field"); // Apply CSS class
         tableNumberSelection.getChildren().addAll(numberLabel, numberField);
 
         TextField nameField = new TextField();
         nameField.setPromptText("Your Name");
+        nameField.getStyleClass().add("text-field"); // Apply CSS class
         TextField phoneField = new TextField();
         phoneField.setPromptText("Your Phone Number");
+        phoneField.getStyleClass().add("text-field"); // Apply CSS class
 
         Label msgLabel = new Label();
         msgLabel.setWrapText(true);
-        msgLabel.setStyle("-fx-text-fill: red; -fx-font-weight: bold;");
+        msgLabel.getStyleClass().add("message-label"); // Base message label class
 
         Button reserveBtn = createSmallDialogButton("Reserve & Pay");
         Button cancelBtn = createSmallDialogButton("Close");
@@ -1242,6 +1540,7 @@ public class Main extends Application {
 
             if (type == null || numberText.isEmpty() || name.isEmpty() || phone.isEmpty()) {
                 msgLabel.setText("Please fill all fields.");
+                msgLabel.getStyleClass().setAll("message-label", "error"); // Apply error class
                 return;
             }
 
@@ -1249,17 +1548,20 @@ public class Main extends Application {
                 int number = Integer.parseInt(numberText);
                 if (number < 1 || number > 10) {
                     msgLabel.setText("Table number must be between 1 and 10.");
+                    msgLabel.getStyleClass().setAll("message-label", "error"); // Apply error class
                     return;
                 }
 
                 boolean[] tablesArray = tableAvailability.get(type);
                 if (tablesArray == null) {
                     msgLabel.setText("Invalid table type selected."); // Should not happen with ComboBox
+                    msgLabel.getStyleClass().setAll("message-label", "error"); // Apply error class
                     return;
                 }
 
                 if (tablesArray[number - 1]) {
                     msgLabel.setText("Table " + type.getDisplayValue() + " (number " + number + ") is already booked.");
+                    msgLabel.getStyleClass().setAll("message-label", "warning"); // Apply warning class
                 } else {
                     // Proceed to payment for booking
                     double bookingFee = 100.00; // Example fixed booking fee
@@ -1268,6 +1570,9 @@ public class Main extends Application {
                     confirmationAlert.setTitle("Confirm Table Booking");
                     confirmationAlert.setHeaderText("Confirm booking for " + name + " at " + type.getDisplayValue() + " #" + number + "?");
                     confirmationAlert.setContentText("A booking fee of Rs." + String.format("%.2f", bookingFee) + " will be charged.");
+                    confirmationAlert.getDialogPane().getStylesheets().add(getClass().getResource("Style.css").toExternalForm()); // Apply CSS
+                    confirmationAlert.getDialogPane().getStyleClass().add("root"); // Apply root style to dialog pane
+
 
                     Optional<ButtonType> confirmResult = confirmationAlert.showAndWait();
                     if (confirmResult.orElse(ButtonType.CANCEL) == ButtonType.OK) {
@@ -1279,6 +1584,9 @@ public class Main extends Application {
                         otpDialog.setTitle("Booking Payment Confirmation");
                         otpDialog.setHeaderText("Your OTP is: " + otp + "\nEnter OTP to confirm payment for Rs." + String.format("%.2f", bookingFee));
                         otpDialog.setContentText("OTP:");
+                        otpDialog.getDialogPane().getStylesheets().add(getClass().getResource("Style.css").toExternalForm()); // Apply CSS
+                        otpDialog.getDialogPane().getStyleClass().add("root"); // Apply root style to dialog pane
+
 
                         Optional<String> otpResult = otpDialog.showAndWait();
                         if (otpResult.isPresent() && otpResult.get().equals(String.valueOf(otp))) {
@@ -1290,7 +1598,7 @@ public class Main extends Application {
                             allBookings.add(newBooking); // Add to observable list
                             DatabaseManager.saveTableBooking(newBooking); // Save to database
 
-                            msgLabel.setStyle("-fx-text-fill: green;");
+                            msgLabel.getStyleClass().setAll("message-label", "success"); // Apply success class
                             msgLabel.setText("Table " + type.getDisplayValue() + " (number " + number + ") reserved and paid for " + name +
                                     ". Your Customer ID: " + newBooking.getCustomerId()); // Use getter
                             customerOutput.setText("Table reservation successful for " + name + " (ID: " + newBooking.getCustomerId() + ")"); // Use getter
@@ -1299,24 +1607,31 @@ public class Main extends Application {
                             stage.close(); // Close reservation dialog on success
                         } else {
                             msgLabel.setText("Payment failed or OTP incorrect. Table not reserved.");
+                            msgLabel.getStyleClass().setAll("message-label", "error"); // Apply error class
                             showAlert(Alert.AlertType.ERROR, "Payment Failed", null, "Payment failed or OTP incorrect. Table not reserved.");
                         }
                     } else {
                         msgLabel.setText("Table booking cancelled by user.");
+                        msgLabel.getStyleClass().setAll("message-label", "warning"); // Apply warning class
                     }
                 }
             } catch (NumberFormatException ex) {
                 msgLabel.setText("Invalid table number.");
+                msgLabel.getStyleClass().setAll("message-label", "error"); // Apply error class
             }
         });
 
         cancelBtn.setOnAction(e -> stage.close());
 
+        // Create Label separately, then add style class, then add to root
+        Label reserveTableLabel = new Label("Reserve a table:");
+        reserveTableLabel.getStyleClass().add("label");
         root.getChildren().addAll(title, checkAvailabilityBtn, availabilityArea, new Separator(),
-                                  new Label("Reserve a table:"), tableTypeSelection, tableNumberSelection,
+                                  reserveTableLabel, tableTypeSelection, tableNumberSelection,
                                   nameField, phoneField, buttonBox, msgLabel);
 
-        Scene scene = new Scene(new ScrollPane(root), 500, 700); // Adjusted size
+        Scene scene = new Scene(new ScrollPane(root), 500, 700);
+        scene.getStylesheets().add(getClass().getResource("Style.css").toExternalForm()); // Apply CSS
         stage.setScene(scene);
         stage.showAndWait(); // Use showAndWait for this dialog
     }
@@ -1340,6 +1655,147 @@ public class Main extends Application {
         availabilityArea.setText(sb.toString());
     }
 
+    // --- Admin: Add Offline Booking Dialog ---
+    private void showAddOfflineBookingDialog() {
+        Stage stage = new Stage();
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.setTitle("Add Offline Table Booking");
+
+        GridPane root = new GridPane();
+        root.setVgap(10);
+        root.setHgap(10);
+        root.setPadding(new Insets(20));
+        root.setAlignment(Pos.CENTER);
+        root.setStyle("-fx-background-color: #e0f7fa; -fx-border-radius: 8px; -fx-background-radius: 8px;");
+        root.getStyleClass().add("root"); // Apply root style
+
+        Label title = new Label("Manually Add a Table Booking:");
+        title.getStyleClass().add("title-label"); // Apply CSS class
+        root.add(title, 0, 0, 2, 1);
+
+        Label nameLabel = new Label("Customer Name:");
+        nameLabel.getStyleClass().add("label"); // Apply CSS class
+        TextField nameField = new TextField();
+        nameField.setPromptText("Enter customer name");
+        nameField.getStyleClass().add("text-field"); // Apply CSS class
+        root.add(nameLabel, 0, 1);
+        root.add(nameField, 1, 1);
+
+        Label phoneLabel = new Label("Phone Number:");
+        phoneLabel.getStyleClass().add("label"); // Apply CSS class
+        TextField phoneField = new TextField();
+        phoneField.setPromptText("Enter phone number");
+        phoneField.getStyleClass().add("text-field"); // Apply CSS class
+        root.add(phoneLabel, 0, 2);
+        root.add(phoneField, 1, 2);
+
+        Label typeLabel = new Label("Table Type:");
+        typeLabel.getStyleClass().add("label"); // Apply CSS class
+        ComboBox<TableType> typeComboBox = new ComboBox<>();
+        typeComboBox.getItems().addAll(TableType.values());
+        typeComboBox.setPromptText("Select table type");
+        typeComboBox.getStyleClass().add("combo-box"); // Apply CSS class
+        root.add(typeLabel, 0, 3);
+        root.add(typeComboBox, 1, 3);
+
+        Label numberLabel = new Label("Table Number (1-10):");
+        numberLabel.getStyleClass().add("label"); // Apply CSS class
+        TextField numberField = new TextField();
+        numberField.setPromptText("Enter table number");
+        numberField.getStyleClass().add("text-field"); // Apply CSS class
+        root.add(numberLabel, 0, 4);
+        root.add(numberField, 1, 4);
+
+        Label paymentStatusLabel = new Label("Payment Status:");
+        paymentStatusLabel.getStyleClass().add("label"); // Apply CSS class
+        ComboBox<PaymentStatus> paymentStatusComboBox = new ComboBox<>();
+        paymentStatusComboBox.getItems().addAll(PaymentStatus.PAID, PaymentStatus.PENDING); // Admin can mark as paid or pending
+        paymentStatusComboBox.setValue(PaymentStatus.PAID); // Default to paid for offline booking
+        paymentStatusComboBox.getStyleClass().add("combo-box"); // Apply CSS class
+        root.add(paymentStatusLabel, 0, 5);
+        root.add(paymentStatusComboBox, 1, 5);
+
+        Label msgLabel = new Label();
+        msgLabel.setWrapText(true);
+        msgLabel.getStyleClass().add("message-label"); // Base message label class
+        root.add(msgLabel, 0, 7, 2, 1);
+
+        Button addBtn = createSmallDialogButton("Add Booking");
+        Button cancelBtn = createSmallDialogButton("Cancel");
+
+        HBox buttonBar = new HBox(10, addBtn, cancelBtn);
+        buttonBar.setAlignment(Pos.CENTER_RIGHT);
+        root.add(buttonBar, 1, 6);
+
+        addBtn.setOnAction(e -> {
+            String name = nameField.getText().trim();
+            String phone = phoneField.getText().trim();
+            TableType type = typeComboBox.getValue();
+            String numberText = numberField.getText().trim();
+            PaymentStatus paymentStatus = paymentStatusComboBox.getValue();
+
+            if (name.isEmpty() || phone.isEmpty() || type == null || numberText.isEmpty() || paymentStatus == null) {
+                msgLabel.setText("Please fill all fields.");
+                msgLabel.getStyleClass().setAll("message-label", "error"); // Apply error class
+                return;
+            }
+
+            try {
+                int number = Integer.parseInt(numberText);
+                if (number < 1 || number > 10) {
+                    msgLabel.setText("Table number must be between 1 and 10.");
+                    msgLabel.getStyleClass().setAll("message-label", "error"); // Apply error class
+                    return;
+                }
+
+                boolean[] tablesArray = tableAvailability.get(type);
+                if (tablesArray == null) {
+                    msgLabel.setText("Invalid table type selected.");
+                    msgLabel.getStyleClass().setAll("message-label", "error"); // Apply error class
+                    return;
+                }
+
+                if (tablesArray[number - 1]) {
+                    msgLabel.setText("Table " + type.getDisplayValue() + " (number " + number + ") is already booked.");
+                    msgLabel.getStyleClass().setAll("message-label", "warning"); // Apply warning class
+                } else {
+                    double bookingFee = 100.00; // Fixed booking fee for simplicity in offline booking
+                    String customerId = "CUST" + (customerIdCounter++);
+
+                    TableBooking newBooking = new TableBooking(customerId, name, phone, type, number, bookingFee);
+                    newBooking.paymentStatus = paymentStatus; // Set payment status based on admin input
+
+                    // Only mark table as occupied if payment is PAID
+                    if (paymentStatus == PaymentStatus.PAID) {
+                        tablesArray[number - 1] = true; // Mark as booked
+                    }
+
+                    allBookings.add(newBooking);
+                    DatabaseManager.saveTableBooking(newBooking);
+
+                    showAlert(Alert.AlertType.INFORMATION, "Booking Added", "Offline Booking Successful",
+                            "Table " + type.getDisplayValue() + " #" + number + " booked for " + name +
+                            ". Customer ID: " + customerId + ". Payment Status: " + paymentStatus.getDisplayValue());
+
+                    getBookingTableView().refresh(); // Refresh TableView
+                    // No need to call loadAllDataFromDatabase() if allBookings is ObservableList and updated
+                    stage.close();
+                }
+            } catch (NumberFormatException ex) {
+                msgLabel.setText("Invalid table number. Please enter a number.");
+                msgLabel.getStyleClass().setAll("message-label", "error"); // Apply error class
+            }
+        });
+
+        cancelBtn.setOnAction(e -> stage.close());
+
+        Scene scene = new Scene(root, 450, 450);
+        scene.getStylesheets().add(getClass().getResource("Style.css").toExternalForm()); // Apply CSS
+        stage.setScene(scene);
+        stage.showAndWait();
+    }
+
+
     // --- Customer: Search Order by ID ---
     private void showSearchOrderById(TextArea customerOutput) {
         Stage stage = new Stage();
@@ -1349,14 +1805,16 @@ public class Main extends Application {
         root.setPadding(new Insets(20));
         root.setAlignment(Pos.CENTER);
         root.setStyle("-fx-background-color: #fce4ec;"); // Light pink background
+        root.getStyleClass().add("root"); // Apply root style
 
         TextField orderIdField = new TextField();
         orderIdField.setPromptText("Enter your Order ID");
         orderIdField.setPrefWidth(150);
+        orderIdField.getStyleClass().add("text-field"); // Apply CSS class
 
         Label msgLabel = new Label();
         msgLabel.setWrapText(true);
-        msgLabel.setStyle("-fx-font-weight: bold;");
+        msgLabel.getStyleClass().add("message-label"); // Base message label class
 
         Button searchBtn = createSmallDialogButton("Search");
         Button cancelBtn = createSmallDialogButton("Cancel");
@@ -1373,25 +1831,29 @@ public class Main extends Application {
                                             .orElse(null);
 
                 if (foundOrder != null) {
-                    msgLabel.setStyle("-fx-text-fill: #4CAF50;");
+                    msgLabel.getStyleClass().setAll("message-label", "success"); // Apply success class
                     msgLabel.setText(foundOrder.toDetailedString()); // Use the detailed string for comprehensive info
                     customerOutput.setText("Order ID: " + id + " details:\n" + foundOrder.toDetailedString()); // Also update main customer output
                 } else {
-                    msgLabel.setStyle("-fx-text-fill: red;");
+                    msgLabel.getStyleClass().setAll("message-label", "error"); // Apply error class
                     msgLabel.setText("Order ID " + id + " not found.");
                     customerOutput.setText("Order ID " + id + " not found.");
                 }
             } catch (NumberFormatException ex) {
-                msgLabel.setStyle("-fx-text-fill: red;");
+                msgLabel.getStyleClass().setAll("message-label", "error"); // Apply error class
                 msgLabel.setText("Invalid Order ID. Please enter a number.");
             }
         });
 
         cancelBtn.setOnAction(e -> stage.close());
 
-        root.getChildren().addAll(new Label("Search for your order details:"), orderIdField, buttonBar, msgLabel);
+        // Fix the error by separating Label creation and style class application
+        Label searchOrderLabel = new Label("Search for your order details:");
+        searchOrderLabel.getStyleClass().add("label");
+        root.getChildren().addAll(searchOrderLabel, orderIdField, buttonBar, msgLabel);
 
         Scene scene = new Scene(root, 350, 300);
+        scene.getStylesheets().add(getClass().getResource("Style.css").toExternalForm()); // Apply CSS
         stage.setScene(scene);
         stage.showAndWait();
     }
