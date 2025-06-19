@@ -1,9 +1,5 @@
 package application;
 
-/**
- * Enum representing the different types of tables based on seating capacity.
- * This standardizes table types across the application.
- */
 public enum TableType {
     TABLE_2("Table2", 2),
     TABLE_4("Table4", 4),
