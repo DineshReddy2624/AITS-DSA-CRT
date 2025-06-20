@@ -1,408 +1,475 @@
 /* General styling for the entire application */
 .root {
     -fx-font-family: "Inter", sans-serif; /* A modern, clean sans-serif font */
-    -fx-background-color: linear-gradient(to bottom right, #f0f2f5, #e0e5ec); /* Soft gradient background */
-}
-
-/* --- Containers & Panes --- */
-.login-container, .register-container {
-    -fx-background-color: linear-gradient(to bottom right, #e0eafc, #cfdef3); /* Light blue gradient for forms */
-    -fx-background-radius: 15px;
-    -fx-border-radius: 15px;
-    -fx-border-color: #a0a0a0;
-    -fx-border-width: 1px;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0.1, 3, 3);
-}
-
-.content-pane {
-    -fx-background-color: #ffffff; /* White background for main content areas */
-    -fx-background-radius: 10px;
-    -fx-border-radius: 10px;
-    -fx-border-color: #d0d0d0;
-    -fx-border-width: 1px;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 5, 0.1, 2, 2);
-    -fx-padding: 20px;
-}
-
-.section-panel {
-    -fx-background-color: #f8f9fa; /* Lighter background for sub-sections */
-    -fx-background-radius: 8px;
-    -fx-border-radius: 8px;
-    -fx-border-color: #e9ecef;
-    -fx-border-width: 1px;
-    -fx-padding: 15px;
-}
-
-/* --- Text Fields & Areas --- */
-.text-field-custom, .text-area-custom {
-    -fx-background-color: #f0f2f5;
-    -fx-border-color: #ced4da;
-    -fx-border-radius: 5px;
-    -fx-background-radius: 5px;
-    -fx-padding: 8px;
-    -fx-font-size: 14px;
-    -fx-prompt-text-fill: #6c757d;
-}
-
-.text-field-custom:focused, .text-area-custom:focused {
-    -fx-border-color: #4a90e2; /* Blue border on focus */
-    -fx-effect: dropshadow(gaussian, rgba(74, 144, 226, 0.4), 5, 0.2, 0, 0);
+    -fx-background-color: linear-gradient(to bottom right, #e0f2f7, #c7e9ed); /* Softer, cool gradient background */
 }
 
 /* --- Buttons --- */
 .button {
-    -fx-background-color: linear-gradient(to bottom, #6cb2eb, #4a90e2); /* Blue gradient */
+    -fx-background-color: linear-gradient(to bottom, #4a90e2, #2d70bb); /* Stronger blue gradient */
     -fx-text-fill: white;
-    -fx-font-size: 15px;
+    -fx-font-size: 14px; /* Slightly adjusted font size */
     -fx-font-weight: bold;
-    -fx-border-radius: 10px;
-    -fx-background-radius: 10px;
-    -fx-padding: 12px 25px;
-    -fx-cursor: hand;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 8, 0.2, 2, 2);
-    -fx-transition: -fx-background-color 0.3s ease, -fx-effect 0.3s ease, -fx-scale-x 0.1s ease, -fx-scale-y 0.1s ease;
+    -fx-border-radius: 8px; /* Slightly less rounded */
+    -fx-background-radius: 8px;
+    -fx-padding: 10px 20px; /* Standard padding */
+    -fx-cursor: hand; /* Changes cursor to a hand on hover */
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.25), 6, 0.2, 2, 2); /* Smoother shadow */
+    -fx-transition: -fx-background-color 0.3s ease, -fx-effect 0.3s ease, -fx-scale-x 0.1s ease, -fx-scale-y 0.1s ease; /* Smooth transitions */
 }
 
 .button:hover {
-    -fx-background-color: linear-gradient(to bottom, #4a90e2, #3a7bd5);
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 10, 0.3, 3, 3);
-    -fx-scale-x: 1.02;
-    -fx-scale-y: 1.02;
+    -fx-background-color: linear-gradient(to bottom, #5ea0ec, #3c7fcc); /* Lighter on hover */
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.35), 10, 0.3, 3, 3); /* More prominent shadow on hover */
 }
 
 .button:pressed {
+    -fx-background-color: linear-gradient(to bottom, #2d70bb, #4a90e2); /* Darker on press */
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.15), 4, 0.1, 1, 1);
     -fx-scale-x: 0.98;
     -fx-scale-y: 0.98;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 5, 0.1, 1, 1);
 }
 
+/* Specific button styles */
 .button-primary {
-    -fx-background-color: linear-gradient(to bottom, #4CAF50, #40C240); /* Green */
-    -fx-text-fill: white;
-    -fx-font-size: 14px;
-    -fx-font-weight: bold;
-    -fx-border-radius: 8px;
-    -fx-background-radius: 8px;
-    -fx-padding: 10px 20px;
-    -fx-cursor: hand;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 5, 0.1, 2, 2);
+    -fx-background-color: linear-gradient(to bottom, #007bff, #0056b3);
 }
 .button-primary:hover {
-    -fx-background-color: linear-gradient(to bottom, #40C240, #36B036);
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 8, 0.2, 2, 2);
+    -fx-background-color: linear-gradient(to bottom, #0069d9, #004085);
 }
 
 .button-success {
-    -fx-background-color: linear-gradient(to bottom, #8bc34a, #7cb342); /* Light Green */
-    -fx-text-fill: white;
-    -fx-font-size: 14px;
-    -fx-font-weight: bold;
-    -fx-border-radius: 8px;
-    -fx-background-radius: 8px;
-    -fx-padding: 10px 20px;
-    -fx-cursor: hand;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 5, 0.1, 2, 2);
+    -fx-background-color: linear-gradient(to bottom, #28a745, #1e7e34);
 }
 .button-success:hover {
-    -fx-background-color: linear-gradient(to bottom, #7cb342, #689f38);
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 8, 0.2, 2, 2);
-}
-
-.button-info {
-    -fx-background-color: linear-gradient(to bottom, #03a9f4, #039be5); /* Light Blue */
-    -fx-text-fill: white;
-    -fx-font-size: 14px;
-    -fx-font-weight: bold;
-    -fx-border-radius: 8px;
-    -fx-background-radius: 8px;
-    -fx-padding: 10px 20px;
-    -fx-cursor: hand;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 5, 0.1, 2, 2);
-}
-.button-info:hover {
-    -fx-background-color: linear-gradient(to bottom, #039be5, #0288d1);
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 8, 0.2, 2, 2);
-}
-
-.button-warning {
-    -fx-background-color: linear-gradient(to bottom, #ffc107, #ffb300); /* Amber */
-    -fx-text-fill: white;
-    -fx-font-size: 14px;
-    -fx-font-weight: bold;
-    -fx-border-radius: 8px;
-    -fx-background-radius: 8px;
-    -fx-padding: 10px 20px;
-    -fx-cursor: hand;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 5, 0.1, 2, 2);
-}
-.button-warning:hover {
-    -fx-background-color: linear-gradient(to bottom, #ffb300, #ffa000);
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 8, 0.2, 2, 2);
+    -fx-background-color: linear-gradient(to bottom, #218838, #19692c);
 }
 
 .button-danger {
-    -fx-background-color: linear-gradient(to bottom, #f44336, #d32f2f); /* Red */
-    -fx-text-fill: white;
-    -fx-font-size: 14px;
-    -fx-font-weight: bold;
-    -fx-border-radius: 8px;
-    -fx-background-radius: 8px;
-    -fx-padding: 10px 20px;
-    -fx-cursor: hand;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 5, 0.1, 2, 2);
+    -fx-background-color: linear-gradient(to bottom, #dc3545, #bd2130);
 }
 .button-danger:hover {
-    -fx-background-color: linear-gradient(to bottom, #d32f2f, #c62828);
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 8, 0.2, 2, 2);
+    -fx-background-color: linear-gradient(to bottom, #c82333, #a71d2a);
 }
 
+.button-warning {
+    -fx-background-color: linear-gradient(to bottom, #ffc107, #e0a800);
+    -fx-text-fill: #343a40; /* Darker text for better contrast */
+}
+.button-warning:hover {
+    -fx-background-color: linear-gradient(to bottom, #e0a800, #c69500);
+}
 
-/* Small button for "Add to Cart" etc. */
-.button-small {
-    -fx-background-color: linear-gradient(to bottom, #5cb85c, #4cae4c); /* Green */
-    -fx-text-fill: white;
+.button-info {
+    -fx-background-color: linear-gradient(to bottom, #17a2b8, #117a8b);
+}
+.button-info:hover {
+    -fx-background-color: linear-gradient(to bottom, #138496, #0e6777);
+}
+
+/* --- Text Fields & Areas --- */
+.text-field-custom, .text-area-custom {
+    -fx-background-color: white;
+    -fx-border-color: #ced4da;
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-padding: 8px 10px;
+    -fx-font-size: 13px;
+    -fx-prompt-text-fill: #6c757d;
+    -fx-effect: innershadow(gaussian, rgba(0,0,0,0.05), 3, 0.0, 0, 1); /* Subtle inner shadow */
+}
+
+.text-field-custom:focused, .text-area-custom:focused {
+    -fx-border-color: #4a90e2; /* Highlight with primary blue on focus */
+    -fx-effect: dropshadow(gaussian, rgba(74, 144, 226, 0.4), 8, 0.2, 0, 0); /* Outer glow on focus */
+}
+
+/* For smaller text fields like in Menu Management */
+.text-field-small {
     -fx-font-size: 12px;
-    -fx-font-weight: bold;
-    -fx-border-radius: 7px;
-    -fx-background-radius: 7px;
-    -fx-padding: 8px 15px;
-    -fx-cursor: hand;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 5, 0.1, 1, 1);
-}
-.button-small:hover {
-    -fx-background-color: linear-gradient(to bottom, #4cae4c, #449d44);
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 6, 0.2, 1, 1);
+    -fx-padding: 6px 8px;
 }
 
-/* --- Labels & Titles --- */
+/* --- Labels & Headings --- */
 .form-title {
-    -fx-font-size: 32px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #333333;
-    -fx-padding: 0 0 20px 0;
-}
-
-.title-label {
     -fx-font-size: 28px;
     -fx-font-weight: bold;
-    -fx-text-fill: #2c3e50;
-    -fx-padding: 0 0 15px 0;
+    -fx-text-fill: #343a40; /* Darker text for titles */
+    -fx-padding: 0 0 10px 0;
 }
 
-.section-header {
-    -fx-font-size: 22px;
+.heading-large {
+    -fx-font-size: 24px;
     -fx-font-weight: bold;
-    -fx-text-fill: #34495e;
-    -fx-padding: 10px 0 10px 0;
+    -fx-text-fill: #343a40;
+    -fx-padding: 0 0 5px 0;
 }
 
-.sub-section-header {
-    -fx-font-size: 18px;
+.heading-medium {
+    -fx-font-size: 20px;
     -fx-font-weight: bold;
-    -fx-text-fill: #555555;
-    -fx-padding: 5px 0 5px 0;
+    -fx-text-fill: #343a40;
+    -fx-padding: 0 0 5px 0;
 }
 
-.info-label, .profile-label {
-    -fx-font-size: 15px;
-    -fx-text-fill: #34495e;
-    -fx-font-weight: 500;
-}
-
-.admin-welcome-label, .customer-welcome-label {
+.sub-heading {
     -fx-font-size: 16px;
     -fx-font-weight: bold;
-    -fx-text-fill: #2c3e50;
+    -fx-text-fill: #495057;
+    -fx-padding: 5px 0;
 }
 
 .message-label {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-padding: 5px;
+    -fx-text-fill: #343a40; /* Default neutral color */
+}
+
+.success-label {
+    -fx-text-fill: #28a745;
+}
+
+.error-label {
+    -fx-text-fill: #dc3545;
+}
+
+.warning-label {
+    -fx-text-fill: #ffc107;
+}
+
+.info-label {
+    -fx-text-fill: #17a2b8;
+}
+
+.profile-label {
     -fx-font-size: 14px;
     -fx-font-weight: bold;
-    -fx-text-fill: #333333;
+    -fx-text-fill: #495057;
     -fx-padding: 5px 0;
 }
-.message-label.error-label {
-    -fx-text-fill: #d32f2f; /* Red for errors */
-}
-.message-label.success-label {
-    -fx-text-fill: #4CAF50; /* Green for success */
-}
-.message-label.warning-label {
-    -fx-text-fill: #ffb300; /* Amber for warnings */
+
+.stat-label {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #0056b3; /* Blue tone for stats */
+    -fx-background-color: #e9ecef; /* Light background for stat boxes */
+    -fx-padding: 10px 15px;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 1px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 3, 0.1, 1, 1);
 }
 
-/* --- Hyperlinks --- */
+/* --- Hyperlink --- */
 .hyperlink-custom {
-    -fx-text-fill: #4a90e2;
-    -fx-font-size: 14px;
+    -fx-text-fill: #007bff;
     -fx-underline: true;
-    -fx-cursor: hand;
+    -fx-font-size: 13px;
 }
 .hyperlink-custom:hover {
-    -fx-text-fill: #3a7bd5;
+    -fx-text-fill: #0056b3;
     -fx-underline: false;
 }
+.hyperlink-custom:visited {
+    -fx-text-fill: #6610f2; /* A subtle purple for visited links */
+}
 
-/* --- TableView --- */
+
+/* --- TableView (General) --- */
+.data-table {
+    -fx-background-color: white;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 1px;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 5, 0.1, 2, 2);
+    -fx-font-size: 13px;
+}
+
 .data-table .column-header-background {
-    -fx-background-color: linear-gradient(to bottom, #4a90e2, #3a7bd5);
-    -fx-background-radius: 5px 5px 0 0;
-    -fx-padding: 8px 0;
+    -fx-background-color: linear-gradient(to bottom, #f8f9fa, #e9ecef);
+    -fx-border-width: 0px 0px 1px 0px;
+    -fx-border-color: #dee2e6;
+    -fx-background-radius: 8px 8px 0 0;
 }
 
 .data-table .column-header .label {
-    -fx-text-fill: white;
+    -fx-text-fill: #495057;
     -fx-font-weight: bold;
     -fx-font-size: 13px;
 }
 
 .data-table .table-cell {
-    -fx-alignment: CENTER-LEFT;
-    -fx-font-size: 12px;
-    -fx-padding: 5px;
-}
-
-.data-table .table-row-cell {
-    -fx-background-color: #ffffff;
-    -fx-background-insets: 0, 0 0 1 0;
-    -fx-padding: 0;
-    -fx-border-color: transparent;
-    -fx-border-width: 0;
+    -fx-border-color: transparent transparent #f0f2f5 transparent; /* Lighter cell borders */
+    -fx-border-width: 0 0 1px 0;
+    -fx-padding: 8px 10px;
 }
 
 .data-table .table-row-cell:odd {
-    -fx-background-color: #f8f9fa; /* Light grey for odd rows */
+    -fx-background-color: #fcfdfe; /* Very light subtle stripe */
 }
 
 .data-table .table-row-cell:selected {
-    -fx-background-color: #b0d8f9; /* Lighter blue for selected row */
-    -fx-text-fill: #000000;
+    -fx-background-color: #cfe2f3; /* Softer selection blue */
+    -fx-text-fill: #343a40;
 }
 
-.data-table .table-row-cell:hover {
-    -fx-background-color: #e6f3fe; /* Even lighter blue on hover */
+/* --- ListView --- */
+.list-view-custom {
+    -fx-background-color: white;
+    -fx-border-color: #ced4da;
+    -fx-border-width: 1px;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 5, 0.1, 2, 2);
+}
+
+.list-view-custom .list-cell {
+    -fx-padding: 10px;
+    -fx-background-color: transparent; /* Cells background is transparent */
+    -fx-border-color: transparent transparent #f0f2f5 transparent;
+    -fx-border-width: 0 0 1px 0;
+}
+
+.list-view-custom .list-cell:last-child {
+    -fx-border-width: 0; /* No border on the last cell */
+}
+
+.list-view-custom .list-cell:filled:hover {
+    -fx-background-color: #e9f5fd; /* Light blue on hover */
+}
+
+.list-view-custom .list-cell:filled:selected {
+    -fx-background-color: #cfe2f3; /* Softer selection blue */
+    -fx-text-fill: #343a40;
+}
+
+/* Specific styling for menu item cells */
+.menu-item-cell .label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #343a40;
+}
+
+.menu-item-cell .label:nth-child(2) { /* Price label */
+    -fx-font-size: 12px;
+    -fx-font-weight: normal;
+    -fx-text-fill: #6c757d;
+}
+
+
+/* --- ComboBox --- */
+.combo-box-custom {
+    -fx-background-color: white;
+    -fx-border-color: #ced4da;
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-padding: 5px 8px;
+    -fx-font-size: 13px;
+    -fx-prompt-text-fill: #6c757d;
+    -fx-effect: innershadow(gaussian, rgba(0,0,0,0.05), 3, 0.0, 0, 1);
+}
+
+.combo-box-custom:hover {
+    -fx-border-color: #a0a0a0;
+}
+
+.combo-box-custom:focused {
+    -fx-border-color: #4a90e2;
+    -fx-effect: dropshadow(gaussian, rgba(74, 144, 226, 0.4), 8, 0.2, 0, 0);
+}
+
+.combo-box-custom .arrow-button {
+    -fx-background-color: transparent;
+}
+
+.combo-box-custom .arrow {
+    -fx-background-color: #495057; /* Darker arrow */
+}
+
+.combo-box-custom .list-cell {
+    -fx-padding: 8px 10px;
+    -fx-background-color: white;
+    -fx-text-fill: #343a40;
+}
+
+.combo-box-custom .list-cell:hover {
+    -fx-background-color: #e9f5fd;
+}
+.combo-box-custom .list-cell:selected {
+    -fx-background-color: #cfe2f3;
+    -fx-text-fill: #343a40;
+}
+
+
+/* --- DatePicker --- */
+.date-picker-custom {
+    -fx-background-color: white;
+    -fx-border-color: #ced4da;
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-padding: 5px 8px;
+    -fx-font-size: 13px;
+    -fx-prompt-text-fill: #6c757d;
+    -fx-effect: innershadow(gaussian, rgba(0,0,0,0.05), 3, 0.0, 0, 1);
+}
+
+.date-picker-custom:hover {
+    -fx-border-color: #a0a0a0;
+}
+
+.date-picker-custom:focused {
+    -fx-border-color: #4a90e2;
+    -fx-effect: dropshadow(gaussian, rgba(74, 144, 226, 0.4), 8, 0.2, 0, 0);
+}
+
+/* --- Slider --- */
+.slider-custom .track {
+    -fx-control-inner-background: #e9ecef; /* Lighter track */
+    -fx-background-color: linear-gradient(to right, #4a90e2, #2d70bb); /* Blue gradient fill */
+    -fx-background-insets: 0;
+    -fx-background-radius: 5px;
+    -fx-padding: 0.25em; /* Thicker track */
+}
+
+.slider-custom .thumb {
+    -fx-background-color: #007bff; /* Primary blue thumb */
+    -fx-background-insets: 0;
+    -fx-background-radius: 10px; /* Rounded thumb */
+    -fx-pref-width: 16px;
+    -fx-pref-height: 16px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 3, 0.0, 1, 1);
+}
+
+.slider-custom .thumb:hover {
+    -fx-background-color: #0056b3; /* Darker blue on hover */
+}
+
+.slider-custom .tick-mark {
+    -fx-background-color: #adb5bd; /* Lighter tick marks */
+    -fx-font-size: 11px;
+}
+
+
+/* --- Spinner --- */
+.spinner-custom {
+    -fx-background-color: white;
+    -fx-border-color: #ced4da;
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-font-size: 13px;
+    -fx-effect: innershadow(gaussian, rgba(0,0,0,0.05), 3, 0.0, 0, 1);
+}
+
+.spinner-custom .text-field {
+    -fx-background-color: transparent; /* Make text field background transparent within spinner */
+    -fx-padding: 6px 8px;
+    -fx-prompt-text-fill: #6c757d;
+}
+
+.spinner-custom .increment-arrow-button,
+.spinner-custom .decrement-arrow-button {
+    -fx-background-color: transparent;
+    -fx-border-radius: 0;
+    -fx-background-radius: 0;
+}
+
+.spinner-custom .increment-arrow-button:hover,
+.spinner-custom .decrement-arrow-button:hover {
+    -fx-background-color: #e9ecef; /* Light grey on hover for arrows */
+}
+
+.spinner-custom .increment-arrow,
+.spinner-custom .decrement-arrow {
+    -fx-background-color: #495057; /* Darker arrows */
+}
+
+.spinner-custom:focused {
+    -fx-border-color: #4a90e2;
+    -fx-effect: dropshadow(gaussian, rgba(74, 144, 226, 0.4), 8, 0.2, 0, 0);
 }
 
 
 /* --- TabPane --- */
+.tab-pane-custom {
+    -fx-background-color: #f8f9fa; /* Light background for the tab content area */
+    -fx-tab-min-width: 120px; /* Minimum width for tabs */
+    -fx-tab-max-width: 180px; /* Maximum width for tabs */
+}
+
 .tab-pane-custom .tab-header-area {
-    -fx-padding: 0;
-    -fx-background-color: #e9ecef; /* Light background for tab headers */
+    -fx-padding: 0 0 0 0; /* Adjust padding as needed */
+    -fx-background-color: linear-gradient(to right, #4a90e2, #2d70bb); /* Blue gradient for tab header area */
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.15), 5, 0.1, 0, 2);
+}
+
+.tab-pane-custom .tab-header-background {
+    -fx-background-color: transparent; /* Make background transparent to show gradient from tab-header-area */
 }
 
 .tab-pane-custom .tab {
-    -fx-background-color: #f0f2f5;
-    -fx-background-radius: 10px 10px 0 0;
-    -fx-border-radius: 10px 10px 0 0;
-    -fx-border-color: #d0d0d0;
-    -fx-border-width: 1px 1px 0 1px;
-    -fx-padding: 10px 20px;
+    -fx-background-color: linear-gradient(to bottom, #6cb2eb, #4a90e2); /* Blue gradient for tabs */
+    -fx-background-insets: 0;
+    -fx-background-radius: 10px 10px 0 0; /* Rounded top corners */
+    -fx-padding: 10px 15px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 3, 0.1, 0, 1);
     -fx-cursor: hand;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 3, 0.1, 1, 1);
-}
-
-.tab-pane-custom .tab:selected {
-    -fx-background-color: #ffffff; /* White for selected tab */
-    -fx-border-color: #4a90e2;
-    -fx-border-width: 1px 1px 0 1px;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 5, 0.2, 2, 2);
-}
-
-.tab-pane-custom .tab:hover {
-    -fx-background-color: #e6f3fe; /* Lighter blue on hover */
+    -fx-pref-height: 40px; /* Consistent tab height */
 }
 
 .tab-pane-custom .tab .tab-label {
-    -fx-text-fill: #34495e;
+    -fx-text-fill: white;
     -fx-font-weight: bold;
     -fx-font-size: 14px;
 }
 
+.tab-pane-custom .tab:selected {
+    -fx-background-color: #f8f9fa; /* White background for selected tab */
+    -fx-background-insets: 0;
+    -fx-background-radius: 10px 10px 0 0;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 8, 0.2, 0, -2); /* Inset shadow for selected tab */
+}
+
 .tab-pane-custom .tab:selected .tab-label {
-    -fx-text-fill: #2c3e50;
+    -fx-text-fill: #343a40; /* Darker text for selected tab */
 }
 
-.tab-pane-custom .tab-content-area {
-    -fx-background-color: #ffffff; /* Main content area background */
-    -fx-background-radius: 0 10px 10px 10px;
-    -fx-border-radius: 0 10px 10px 10px;
-    -fx-border-color: #d0d0d0;
-    -fx-border-width: 0 1px 1px 1px;
-    -fx-padding: 15px;
+.tab-pane-custom .tab:hover:not(:selected) {
+    -fx-background-color: linear-gradient(to bottom, #5ea0ec, #3c7fcc); /* Lighter blue on hover for unselected tabs */
 }
 
-/* --- ListView (for menu browsing) --- */
-.list-view-custom {
-    -fx-background-color: #ffffff;
-    -fx-border-color: #d0d0d0;
-    -fx-border-radius: 8px;
-    -fx-background-radius: 8px;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 5, 0.05, 1, 1);
-}
-
-.list-view-custom .scroll-pane {
-    -fx-background-color: transparent;
-}
-
-.list-view-custom .viewport {
-    -fx-background-color: transparent;
-}
-
-.list-view-custom .list-cell {
-    -fx-background-color: #ffffff;
-    -fx-padding: 10px;
-    -fx-alignment: CENTER_LEFT;
-    -fx-border-color: #e0e0e0;
-    -fx-border-width: 0 0 1px 0; /* Separator line between items */
-    -fx-effect: null; /* Remove default hover effect */
-}
-
-.list-view-custom .list-cell:empty {
-    -fx-background-color: transparent;
-    -fx-border-width: 0;
-}
-
-.list-view-custom .list-cell:filled:selected {
-    -fx-background-color: #e6f3fe; /* Light blue on selection */
-    -fx-text-fill: #000000;
-}
-
-.list-view-custom .list-cell:filled:hover {
-    -fx-background-color: #f0f8ff; /* Very light blue on hover */
-}
-
-.menu-item-cell {
-    -fx-background-color: #ffffff;
-    -fx-background-radius: 8px;
-    -fx-border-radius: 8px;
-    -fx-border-color: #e0e0e0;
+/* --- Separator --- */
+.separator .line {
+    -fx-border-color: #ced4da;
     -fx-border-width: 1px;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 5, 0.1, 2, 2);
-    -fx-padding: 10px;
-    -fx-alignment: CENTER_LEFT;
-    -fx-spacing: 10px; /* Spacing between image and text */
 }
 
-/* --- Cart Section in Customer Menu --- */
-.cart-section {
-    -fx-background-color: #f7f9fc; /* Slightly darker background for cart */
-    -fx-background-radius: 10px;
-    -fx-border-radius: 10px;
-    -fx-border-color: #d0d0d0;
-    -fx-border-width: 1px;
-    -fx-padding: 15px;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 5, 0.1, 2, 2);
+/* --- Top Bar (for logged-in user info and logout) --- */
+.top-bar {
+    -fx-background-color: #f0f2f5; /* Light grey background */
+    -fx-border-color: #e0e5ec;
+    -fx-border-width: 0 0 1px 0; /* Bottom border */
+    -fx-padding: 8px 20px;
+    -fx-alignment: CENTER_RIGHT;
+    -fx-spacing: 15px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.05), 3, 0.0, 0, 1);
 }
 
-.cart-total-label {
-    -fx-font-size: 16px;
+.top-bar .label {
+    -fx-font-size: 14px;
     -fx-font-weight: bold;
-    -fx-text-fill: #2c3e50;
-    -fx-padding: 10px 0 0 0;
+    -fx-text-fill: #495057;
 }
 
-/* --- Custom Alert Dialog styling (requires manual application to DialogPane in Java code) --- */
-.alert-dialog-custom {
+
+/* Custom Alert Dialog styling (requires manual application to DialogPane in Java code) */
+.alert.dialog-pane {
     -fx-background-color: linear-gradient(to bottom right, #f0f2f5, #e0e5ec);
     -fx-border-color: #a0a0a0;
     -fx-border-width: 1px;
@@ -411,93 +478,66 @@
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 15, 0.2, 5, 5);
 }
 
-.alert-dialog-custom .header-panel {
+.alert.dialog-pane .header-panel {
     -fx-background-color: linear-gradient(to bottom, #4a90e2, #2d70bb); /* Header background */
     -fx-background-radius: 10px 10px 0 0;
     -fx-padding: 10px 15px;
 }
 
-.alert-dialog-custom .header-panel .label {
+.alert.dialog-pane .header-panel .label {
     -fx-text-fill: white;
     -fx-font-size: 18px;
     -fx-font-weight: bold;
 }
 
-.alert-dialog-custom .content {
-    -fx-background-color: #ffffff; /* Content area background */
+.alert.dialog-pane .content {
+    -fx-background-color: #ffffff; /* White content area */
     -fx-padding: 15px;
-    -fx-font-size: 14px;
-}
-
-.alert-dialog-custom .button-bar .button {
-    -fx-background-color: linear-gradient(to bottom, #6cb2eb, #4a90e2); /* Blue gradient for alert buttons */
-    -fx-text-fill: white;
     -fx-font-size: 13px;
-    -fx-font-weight: bold;
-    -fx-border-radius: 7px;
-    -fx-background-radius: 7px;
-    -fx-padding: 8px 20px;
-    -fx-cursor: hand;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 5, 0.1, 2, 2);
-}
-.alert-dialog-custom .button-bar .button:hover {
-    -fx-background-color: linear-gradient(to bottom, #4a90e2, #3a7bd5);
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 8, 0.2, 2, 2);
+    -fx-text-fill: #343a40;
 }
 
-
-/* --- ComboBox --- */
-.combo-box-custom {
-    -fx-background-color: #f0f2f5;
-    -fx-border-color: #ced4da;
-    -fx-border-radius: 5px;
-    -fx-background-radius: 5px;
-    -fx-font-size: 14px;
-}
-.combo-box-custom .arrow-button {
-    -fx-background-color: #e9ecef;
-    -fx-background-radius: 0 5px 5px 0;
-}
-.combo-box-custom .arrow {
-    -fx-background-color: #4a90e2;
+.alert.dialog-pane .button-bar {
+    -fx-background-color: #e9ecef; /* Light grey button bar */
+    -fx-padding: 10px 15px;
+    -fx-background-radius: 0 0 10px 10px;
 }
 
-/* --- DatePicker --- */
-.date-picker-custom {
-    -fx-background-color: #f0f2f5;
-    -fx-border-color: #ced4da;
-    -fx-border-radius: 5px;
-    -fx-background-radius: 5px;
-    -fx-font-size: 14px;
-}
-.date-picker-custom .arrow-button {
-    -fx-background-color: #e9ecef;
-    -fx-background-radius: 0 5px 5px 0;
-}
-.date-picker-custom .arrow-button .arrow {
-    -fx-background-color: #4a90e2;
+.alert.dialog-pane .button {
+    -fx-min-width: 80px; /* Ensure buttons have a minimum width */
 }
 
-
-/* --- Slider --- */
-.slider-custom .track {
-    -fx-background-color: #e0e0e0;
-    -fx-background-radius: 5px;
-    -fx-pref-height: 8px;
+/* Background styles for login/register forms */
+.login-container {
+    -fx-background-image: url('https://placehold.co/1200x800/A0DAEB/FFFFFF/png?text=Restaurant+Login'); /* Example image */
+    -fx-background-size: cover;
+    -fx-background-position: center center;
+    -fx-alignment: center; /* Center the form content */
 }
-.slider-custom .thumb {
-    -fx-background-color: #4a90e2;
+
+.register-container {
+    -fx-background-image: url('https://placehold.co/1200x800/B0E0E6/FFFFFF/png?text=Restaurant+Register'); /* Example image */
+    -fx-background-size: cover;
+    -fx-background-position: center center;
+    -fx-alignment: center;
+}
+
+/* Content Pane general style */
+.content-pane {
+    -fx-background-color: #ffffff;
     -fx-background-radius: 10px;
-    -fx-pref-width: 18px;
-    -fx-pref-height: 18px;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 5, 0.2, 0, 0);
+    -fx-border-radius: 10px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 10, 0.1, 0, 5);
+    -fx-padding: 20px;
+    -fx-spacing: 15px;
 }
-.slider-custom .axis .tick-label {
-    -fx-text-fill: #6c757d;
-    -fx-font-size: 11px;
-}
-.slider-custom .axis .tick-mark {
-    -fx-stroke: #adb5bd; /* Lighter tick marks */
-    -fx-fill: #adb5bd; /* Lighter tick marks */
-    -fx-font-size: 11px;
+
+/* Stats Grid for Dashboard */
+.stats-grid {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 1px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 8, 0.1, 0, 3);
 }
